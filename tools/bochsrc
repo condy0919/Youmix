@@ -1,0 +1,18 @@
+gdbstub: enabled=1,port=1234,text_base=0,data_base=0,bss_base=0
+
+megs: 32
+
+romimage: file="$BXSHARE/BIOS-bochs-latest"
+vgaromimage: file="$BXSHARE/VGABIOS-lgpl-latest"
+
+floppya: 1_44=floppy.img, status=inserted
+boot: a
+
+boot: floppy
+
+mouse: enabled=0
+
+keyboard_mapping: enabled=1, map="$BXSHARE/keymaps/x11-pc-us.map"
+
+clock: sync=realtime
+cpu: ips=1000000
