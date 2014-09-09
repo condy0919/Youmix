@@ -25,7 +25,8 @@ int kern_entry() {
     cout << oct << 0xB8000 << endl;
     cout << setw(10) << "hello" << endl;
     cout << setw(10) << left << "world" << endl;
-    cout << setw(20) << left << red << "Konkapu Youmu diski!" << endl;
+    cout << setw(20) << left << red << "Konpaku Youmu diski!" << endl;
+    cout << "Kernel\n";
 
     return 0;
 }
