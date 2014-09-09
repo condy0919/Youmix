@@ -28,5 +28,11 @@ int kern_entry() {
     cout << setw(20) << left << red << "Konpaku Youmu diski!" << endl;
     cout << "Kernel\n";
 
+    std::uint8_t x = 10;
+    cout << dec << x << endl;
+    cout << dec << -1 << endl;
+
+    cout.print("%d %c %s %x\n", -1, 'a', "hello", 255);
+
     return 0;
 }

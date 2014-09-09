@@ -1,8 +1,8 @@
 #pragma once
 
-#include <type_traits>
 #include <cstdint>
 #include <cctype>
+#include <cstdarg>
 
 #include "algorithm.hpp"
 #include "string.hpp"
@@ -84,9 +84,14 @@ public:
     std::size_t width() const;
     std::size_t width(std::size_t);
 
-    stream &operator<<(char);
-    stream &operator<<(std::int32_t);
-    stream &operator<<(std::uint32_t);
+    // C-style print
+    stream &print(const char *, ...);
+
+    stream &operator<<(const char);
+    stream &operator<<(long);
+    stream &operator<<(unsigned long);
+    stream &operator<<(int);
+    stream &operator<<(unsigned int);
     stream &operator<<(const char *);
 
     stream &operator<<(_Setw); // for setw
@@ -101,8 +106,7 @@ private:
         const char *zero = digits + 9;
 
         Integer t = x;
-        std::size_t base =
-            (_flags & fmt_oct) ? 8 : ((_flags & fmt_dec) ? 10 : 16);
+        int base = (_flags & fmt_oct) ? 8 : ((_flags & fmt_dec) ? 10 : 16);
         char *p = buf;
         while (t) {
             *p++ = zero[t % base];

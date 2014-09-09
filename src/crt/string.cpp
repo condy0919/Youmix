@@ -9,6 +9,18 @@ void *memmove(void *dest, const void *src, std::size_t n) {
     return dest;
 }
 
+void *memset(void *s, int c, std::size_t n) {
+    char ch = c;
+    register char *p = (char*)s;
+    while (n--)
+        *p++ = ch;
+    return p;
+}
+
+void *memcpy(void *dest, const char *src, std::size_t n) {
+    return memmove(dest, src, n);
+}
+
 std::size_t strlen(const char* s) {
     register const char *p = s;
 
@@ -45,11 +57,24 @@ std::size_t strlen(const char* s) {
     return 0;
 }
 
-void *memset(void *s, int c, std::size_t n) {
-    char ch = c;
-    register char *p = (char*)s;
-    while (n--)
-        *p++ = ch;
-    return p;
+int strcmp(const char *str1, const char *str2) {
+    while (*str1 && *str2 && *str1 == *str2) {
+        ++str1;
+        ++str2;
+    }
+    return *str1 - *str2;
+}
+
+char *strcpy(char *dest, const char *src) {
+    while ((*dest++ = *src++))
+        ;
+    return dest;
+}
+
+char *strcat(char *dest, const char *src) {
+    char *t = dest;
+    dest += strlen(dest);
+    strcpy(dest, src);
+    return t;
 }
 
