@@ -10,18 +10,47 @@ void *memmove(void *dest, const void *src, std::size_t n) {
 }
 
 void *memset(void *s, int c, std::size_t n) {
-    char ch = c;
-    register char *p = (char*)s;
-    while (n--)
-        *p++ = ch;
-    return p;
+    long int dstp = (long int)s;
+
+    if (n >= 8) {
+        std::uint32_t cccc = (std::uint8_t)c;
+        cccc |= cccc << 8;
+        cccc |= cccc << 16;
+        while (dstp % sizeof(std::uint32_t) != 0) {
+            *(std::uint8_t*)dstp = c;
+            ++dstp;
+            --n;
+        }
+
+        std::size_t xlen = n / (sizeof(std::uint32_t) * 8);
+        while (xlen > 0) {
+            std::uint32_t *p = (std::uint32_t*)dstp;
+            p[0] = cccc;
+            p[1] = cccc;
+            p[2] = cccc;
+            p[3] = cccc;
+            p[4] = cccc;
+            p[5] = cccc;
+            p[6] = cccc;
+            p[7] = cccc;
+            dstp += 8 * sizeof(std::uint32_t);
+            --xlen;
+        }
+        n %= 8 * sizeof(std::uint32_t);
+    }
+
+    while (n-- > 0) {
+        *(std::uint8_t*)dstp = c;
+        ++dstp;
+    }
+    return s;
 }
 
 void *memcpy(void *dest, const char *src, std::size_t n) {
     return memmove(dest, src, n);
 }
 
-std::size_t strlen(const char* s) {
+std::size_t strlen(const char *s) {
     register const char *p = s;
 
     if (*p && (std::uint32_t)p % 0x4)
@@ -66,9 +95,17 @@ int strcmp(const char *str1, const char *str2) {
 }
 
 char *strcpy(char *dest, const char *src) {
+    char *ret = dest;
     while ((*dest++ = *src++))
         ;
-    return dest;
+    return ret;
+}
+
+char *stpcpy(char *dest, const char *src) {
+    do
+        *dest++ = *src;
+    while (*src++ != '\0');
+    return dest - 1;
 }
 
 char *strcat(char *dest, const char *src) {

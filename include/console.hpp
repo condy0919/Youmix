@@ -179,7 +179,7 @@ private:
         std::uint16_t *const vbuf = (std::uint16_t * const)0xB8000;
         const std::uint16_t blank = (((black << 4) | (white)) << 8) | ' ';
 
-        std::uint8_t row, col;
+        static std::uint8_t row, col;
 
         void outb(std::uint16_t port, std::uint8_t value) {
             __asm__ __volatile__("outb %1, %0" : : "dN"(port), "a"(value));

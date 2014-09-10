@@ -48,6 +48,9 @@ stream &stream::print(const char *fmt, ...) {
         case 'd':
             *this << va_arg(ap, int);
             break;
+        case 'u':
+            *this << va_arg(ap, unsigned int);
+            break;
         case 's':
             *this << va_arg(ap, const char *);
             break;
@@ -180,4 +183,8 @@ stream &endl(stream &s) {
 _Setw setw(std::size_t w) {
     return { w };
 }
+
+std::uint8_t stream::screen::row = 0;
+std::uint8_t stream::screen::col = 0;
+
 }
