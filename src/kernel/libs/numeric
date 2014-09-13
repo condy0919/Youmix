@@ -1,0 +1,12 @@
+#pragma once
+
+namespace std {
+template <typename ForwardIterator, typename T>
+void iota(ForwardIterator first, ForwardIterator last, T val) {
+    while (first != last) {
+        *first = val;
+        ++first;
+        ++val
+    }
+}
+}

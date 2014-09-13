@@ -1,68 +1,63 @@
-#C_SRCS = $(shell find . -iname "*.c")
-#C_OBJS = $(patsubst %.c, %.o, $(C_SRCS))
-CPP_SRCS = $(shell find . -iname "*.cpp")
-CPP_OBJS = $(patsubst %.cpp, %.o, $(CPP_SRCS))
-ASM_SRCS = $(shell find . -iname "*.s")
-ASM_OBJS = $(patsubst %.s, %.o, $(ASM_SRCS))
-
 QEMU = qemu-system-i386
 
 KERNEL = Youmix
 
-#CC = gcc
-CXX = g++
-#LD = ld
-ASM = nasm
+CC = i686-elf-gcc
+CXX = i686-elf-g++
+AS = i686-elf-as
 
-#CFLAGS = -c -Wall -m32 -ggdb -gstabs+ -nostdlib -fno-builtin -fno-stack-protector -I include -std=c99
-CXXFLAGS = -c -Wall -m32 -ggdb -gstabs+ -nostdlib -fno-builtin -fno-stack-protector -I include -ffreestanding -fno-rtti -fno-exceptions -std=c++11
-#LDFLAGS = -T tools/kernel.ld -m elf_i386 -nostdlib
-ASMFLAGS = -f elf -g -F stabs
+CXXFLAGS = -c -Wall -Wextra -ffreestanding -fno-exceptions -fno-rtti -ggdb -gstabs+ -std=c++11
+ASFLAGS = -g --gstabs
 
-all: $(ASM_OBJS) $(CPP_OBJS) link update_image
+CPP_SRCS = $(shell find . -iname "*.cpp")
+CPP_OBJS = $(patsubst %.cpp, %.o, $(CPP_SRCS))
+AS_SRCS = $(shell find . -iname "*.s")
+AS_OBJS = $(patsubst %.s, %.o, $(AS_SRCS))
+
+# for global constructor
+CRTI_SRC = $(shell find . -iname "crti.s")
+CRTI_OBJ = $(patsubst %.s, %.o, $(CRTI_SRC))
+CRTBEGIN_OBJ = $(shell $(CXX) $(CXXFLAGS) -print-file-name=crtbegin.o)
+CRTEND_OBJ = $(shell $(CXX) $(CXXFLAGS) -print-file-name=crtend.o)
+CRTN_SRC = $(shell find . -iname "crtn.s")
+CRTN_OBJ = $(patsubst %.s, %.o, $(CRTN_SRC))
+
+OBJS = $(filter-out $(CRTI_OBJ) $(CRTN_OBJ), $(AS_OBJS)) $(CPP_OBJS)
+
+OBJ_LINK_LIST = $(CRTI_OBJ) $(CRTBEGIN_OBJ) $(OBJS) $(CRTEND_OBJ) $(CRTN_OBJ)
+INTERNAL_OBJS = $(CRTI_OBJ) $(OBJS) $(CRTN_OBJ)
+
+
+LINK: $(OBJ_LINK_LIST)
+	@echo -e "\033[31mLINK\033[0m kernel file"
+	$(CXX) -T tools/linker.ld -o $(KERNEL) $(OBJ_LINK_LIST) -ffreestanding -nostdlib -lgcc 
 
 .cpp.o:
-	@echo Compile C++ source code $< ...
+	@echo -e "\033[31mCompile\033[0m C++ source code $< ..."
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 .s.o:
-	@echo Compile assembler source code $< ...
-	$(ASM) $(ASMFLAGS) $<
+	@echo -e "\033[31mCompile\033[0m assembler source code $< ..."
+	$(AS) $(ASFLAGS) $< -o $@
 
-link:
-	@echo Link kernel file
-#$(LD) $(LDFLAGS) $(ASM_OBJS) $(C_OBJS) -o $(KERNEL)
-	$(CXX) -T tools/kernel.ld -m32 -nostdlib $(ASM_OBJS) $(CPP_OBJS) -o $(KERNEL)
-
-.PHONY: clean
 clean:
-	$(RM) $(ASM_OBJS) $(CPP_OBJS) $(KERNEL)
+	$(RM) $(INTERNAL_OBJS) $(KERNEL)
 
-.PHONY: update_image
 update_image:
 	sudo mount floppy.img /mnt
 	sudo cp $(KERNEL) /mnt/kernel
-	sleep 1
-	sudo umount /mnt/
+	sudo umount /mnt
 
-.PHONY: mount_image
-mount_image:
-	sudo mount floppy.img /mnt/
-
-.PHONY: umount_image
-umount_image:
-	sudo umount /mnt/
-
-.PHONY: qemu
 qemu:
+	$(QEMU) -kernel $(KERNEL)
+
+qemu-floppy:
 	$(QEMU) -fda floppy.img -boot a
 
-.PHONY: bochs
-bochs:
-	bochs -f tools/bochsrc.txt
-
-.PHONY: debug
 debug:
+	$(QEMU) -S -s -kernel $(KERNEL) &
+	cgdb -x tools/gdbinit 
+
+debug-floppy:
 	$(QEMU) -S -s -fda floppy.img -boot a &
-	sleep 1
 	cgdb -x tools/gdbinit

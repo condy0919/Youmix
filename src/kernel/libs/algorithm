@@ -1,0 +1,70 @@
+#pragma once
+
+#include <stdint.h>
+#include <stddef.h>
+
+
+namespace std {
+template <typename InputIteraotr, typename Size, typename OutputIterator>
+OutputIterator copy_n(InputIteraotr first, Size n, OutputIterator result) {
+    while (n > 0) {
+        *result = *first;
+        ++result;
+        ++first;
+        --n;
+    }
+    return result;
+}
+
+template <typename OutputIterator, typename Size, typename T>
+OutputIterator fill_n(OutputIterator first, Size n, const T &val) {
+    while (n > 0) {
+        *first = val;
+        ++first;
+        --n;
+    }
+    return first;
+}
+
+template <typename T> void swap(T &a, T &b) {
+    T t = a;
+    a = b;
+    b = t;
+}
+
+template <typename ForwardIter>
+void iter_swap(ForwardIter a, ForwardIter b) {
+    swap(*a, *b);
+}
+
+template <typename BidirectionalIteraotr>
+void reverse(BidirectionalIteraotr first, BidirectionalIteraotr last) {
+    while ((first != last) && (first != --last)) {
+        iter_swap(first, last);
+        ++first;
+    }
+}
+
+template <typename T, size_t N> void swap(T (&a)[N], T (&b)[N]) {
+    swap_ranges(a, a + N, b);
+}
+
+template <typename ForwardIter1, typename ForwardIter2>
+ForwardIter2 swap_ranges(ForwardIter1 first1, ForwardIter1 last1,
+                         ForwardIter2 first2) {
+    while (first1 != last1) {
+        swap(*first1, *first2);
+        ++first1;
+        ++first2;
+    }
+}
+
+template <typename T> const T &min(const T &a, const T &b) {
+    return a < b ? a : b;
+}
+
+template <typename T> const T &max(const T &a, const T &b) {
+    return a < b ? b : a;
+}
+}
+

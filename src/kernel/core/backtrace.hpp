@@ -1,15 +1,14 @@
 #pragma once
 
-#include "console.hpp"
+#include "ostream.hpp"
 #include "elf.hpp"
 
-#define assert(cond) \
+#define assert(x) \
     do {\
-        if (!(cond))\
+        if (!(x))\
             kernel_panic();\
     } while (0)
 
 void kernel_panic();
 
 void print_seg_status();
-

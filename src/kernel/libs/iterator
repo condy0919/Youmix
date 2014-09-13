@@ -1,0 +1,30 @@
+#pragma once
+
+#include <stdint.h>
+#include <stddef.h>
+
+namespace std {
+template <typename C> inline auto begin(C &c) -> decltype(c.begin()) {
+    return c.begin();
+}
+
+template <typename C> inline auto begin(const C &c) -> decltype(c.begin()) {
+    return c.begin();
+}
+
+template <typename C> inline auto end(C &c) -> decltype(c.end()) {
+    return c.end();
+}
+
+template <typename C> inline auto end(const C &c) -> decltype(c.end()) {
+    return c.end();
+}
+
+template <typename _Tp, size_t N> inline _Tp *end(_Tp (&_array)[N]) {
+    return _array + N;
+}
+
+template <typename _Tp, size_t N> inline _Tp *begin(_Tp (&_array)[N]) {
+    return _array;
+}
+}
