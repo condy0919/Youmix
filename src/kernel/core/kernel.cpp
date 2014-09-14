@@ -6,13 +6,16 @@
 
 #include "multiboot.h"
 #include "ostream.hpp"
-#include "assert.h"
- 
-/* Check if the compiler thinks if we are targeting the wrong operating system. */
+#include "assert.hpp"
+#include "gdt.hpp"
+
+/* Check if the compiler thinks if we are targeting the wrong operating system.
+ */
 #if defined(__linux__)
-#error "You are not using a cross-compiler, you will most certainly run into trouble"
+#error                                                                         \
+    "You are not using a cross-compiler, you will most certainly run into trouble"
 #endif
- 
+
 /* This tutorial will only work for the 32-bit ix86 targets. */
 #if !defined(__i386__)
 #error "This tutorial needs to be compiled with a ix86-elf compiler"
@@ -21,11 +24,15 @@
 multiboot_info_t *glb_mboot_ptr;
 
 #if defined(__cplusplus)
-    extern "C" /* Use C linkage for kernel_main. */
+extern "C" /* Use C linkage for kernel_main. */
 #endif
 int kernel_main(uint32_t magic, multiboot_info_t *mb) {
     glb_mboot_ptr = mb;
+
+    init_gdt();
+
     using namespace std;
+
     cout.clear();
     cout << "hello, world" << endl;
     cout << std::GREEN << "Pachouli GO!" << endl;
@@ -36,12 +43,10 @@ int kernel_main(uint32_t magic, multiboot_info_t *mb) {
     cout << "Still RED" << endl;
     cout << "Normal Color" << endl;
     std::cout << std::BROWN << "Yeah!" << std::endl;
-
     cout << hex << magic << " " << mb << endl;
     cout << dec << 0 << endl;
 
-
-    assert(0);
+    assert(1);
 
     return 0;
 }
