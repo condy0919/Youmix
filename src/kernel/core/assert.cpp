@@ -1,7 +1,7 @@
-#include "backtrace.hpp"
+#include "assert.h"
 
 void print_seg_status() {
-    static int times = 0;
+    //static int times = 0;
     uint16_t cs, ds, es, ss;
 
     __asm__ __volatile__("mov %%cs, %0" : "=m"(cs));
@@ -10,11 +10,12 @@ void print_seg_status() {
     __asm__ __volatile__("mov %%ss, %0" : "=m"(ss));
 
     using namespace std;
-    cout << times++ << ": @ring" << (cs & 0x3) << endl;
-    cout << dec << times << ": cs = " << hex << cs << endl;
-    cout << dec << times << ": ds = " << hex << ds << endl;
-    cout << dec << times << ": es = " << hex << es << endl;
-    cout << dec << times << ": ss = " << hex << ss << endl;
+    cout /*<< dec << times*/ << ": @ring" << (cs & 0x3) << endl;
+    cout /*<< dec << times*/ << ": cs = " << hex << cs << endl;
+    cout /*<< dec << times*/ << ": ds = " << hex << ds << endl;
+    cout /*<< dec << times*/ << ": es = " << hex << es << endl;
+    cout /*<< dec << times*/ << ": ss = " << hex << ss << endl;
+    //++times;
 }
 
 static void print_stack_trace() {

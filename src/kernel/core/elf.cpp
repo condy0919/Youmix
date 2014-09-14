@@ -2,10 +2,9 @@
 #include "../libs/string.h"
 
 Elf_info::Elf_info(multiboot_info_t *mb) {
-    //elf_section_header_t *sh = (elf_section_header_t *)mb->u.elf_sec.addr;
-    elf_section_header_t *sh = (elf_section_header_t *)mb->addr;
-    uint32_t shstrtab = sh[mb->shndx].addr;
-    for (size_t i = 0; i < mb->num; ++i) {
+    elf_section_header_t *sh = (elf_section_header_t *)mb->u.elf_sec.addr;
+    uint32_t shstrtab = sh[mb->u.elf_sec.shndx].addr;
+    for (size_t i = 0; i < mb->u.elf_sec.num; ++i) {
         const char *name = (const char *)(shstrtab + sh[i].name);
         if (strcmp(name, ".strtab") == 0) {
             strtab = (const char *)sh[i].addr;

@@ -47,6 +47,12 @@ ostream &ostream::printf(const char *fmt, ...) {
             *this << c;
             break;
         }
+        case 'p': {
+            void *p = va_arg(ap, void *);
+            *this << p;
+            break;
+        }
+
         default:
             break;
         }
@@ -154,5 +160,4 @@ ostream &endl(ostream &s) {
 }
 
 _Setw setw(size_t n) { return {n}; }
-
 }

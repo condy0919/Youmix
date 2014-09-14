@@ -15,7 +15,6 @@ enum Fmtflags {
     fmt_hex = 1 << 4
 };
 
-
 namespace std {
 class ostream : public screen {
 public:
@@ -43,13 +42,16 @@ public:
     ostream &operator<<(const char *);
 
     ostream &operator<<(ostream &(*)(ostream &)); // for base and adjust
-    ostream &operator<<(_Setw);                 // for setw
-    ostream &operator<<(Color);                 // for foreground color
+    ostream &operator<<(_Setw);                   // for setw
+    ostream &operator<<(Color);                   // for foreground color
 
     template <typename T> ostream &operator<<(const T *p) {
-        return *this << (unsigned long)p;
+        uint32_t temp = flags();
+        set(fmt_hex);
+        *this << (unsigned long)p;
+        flags(temp);
+        return *this;
     }
-
 
 private:
     template <typename Integral> void itoa(Integral x, char *buf) {
@@ -59,10 +61,10 @@ private:
         Integral t = x;
         int base = (_flags & fmt_oct) ? 8 : ((_flags & fmt_dec) ? 10 : 16);
         char *p = buf;
-        while (t) {
+        do {
             *p++ = zero[t % base];
             t /= base;
-        }
+        } while (t);
         if (x < 0) {
             *p++ = '-';
         } else if (base == 16) {

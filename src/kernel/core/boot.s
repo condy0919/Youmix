@@ -27,8 +27,8 @@ _start:
     call _init
 
     popl %eax
-    pushl %ebx
-    pushl %eax
+    pushl %ebx # ptr to multiboot_info_t
+    pushl %eax # magic
     call kernel_main
 
     call _fini

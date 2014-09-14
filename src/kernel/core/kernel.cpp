@@ -6,7 +6,7 @@
 
 #include "multiboot.h"
 #include "ostream.hpp"
-#include "backtrace.hpp"
+#include "assert.h"
  
 /* Check if the compiler thinks if we are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -27,8 +27,6 @@ int kernel_main(uint32_t magic, multiboot_info_t *mb) {
     glb_mboot_ptr = mb;
     using namespace std;
     cout.clear();
-    int temp_val = 123;
-    cout << &temp_val << endl;
     cout << "hello, world" << endl;
     cout << std::GREEN << "Pachouli GO!" << endl;
     cout << left << setw(12) << 0xff << " JustDoIt" << endl;
@@ -37,12 +35,13 @@ int kernel_main(uint32_t magic, multiboot_info_t *mb) {
     (cout << std::RED << "RWBY\n").puts("This is a newline\n");
     cout << "Still RED" << endl;
     cout << "Normal Color" << endl;
-
     std::cout << std::BROWN << "Yeah!" << std::endl;
 
     cout << hex << magic << " " << mb << endl;
+    cout << dec << 0 << endl;
 
-    kernel_panic();
+
+    assert(0);
 
     return 0;
 }
