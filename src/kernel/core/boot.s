@@ -24,17 +24,22 @@ _start:
     andl $0xFFFFFFF0, %esp
     pushl %eax
 
-    call _init
+    leal glb_mboot_ptr, %eax
+    movl %ebx, (%eax)
+
+    call _init # run global constructors
+
+    call init_gdt
 
     popl %eax
     pushl %ebx # ptr to multiboot_info_t
     pushl %eax # magic
     call kernel_main
 
-    call _fini
+    call _fini # run global destructors
 
-    cli # 清除中断
-    hlt # 关闭中断
+    cli # clear interrupts
+    hlt # halt
 .Lhang:
     jmp .Lhang
 

@@ -12,8 +12,7 @@
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
 #if defined(__linux__)
-#error                                                                         \
-    "You are not using a cross-compiler, you will most certainly run into trouble"
+#error "You are not using a cross-compiler, you will most certainly run into trouble"
 #endif
 
 /* This tutorial will only work for the 32-bit ix86 targets. */
@@ -27,9 +26,9 @@ multiboot_info_t *glb_mboot_ptr;
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 int kernel_main(uint32_t magic, multiboot_info_t *mb) {
-    glb_mboot_ptr = mb;
+    //glb_mboot_ptr = mb;
 
-    init_gdt();
+    //init_gdt();
 
     using namespace std;
 
@@ -45,6 +44,8 @@ int kernel_main(uint32_t magic, multiboot_info_t *mb) {
     std::cout << std::BROWN << "Yeah!" << std::endl;
     cout << hex << magic << " " << mb << endl;
     cout << dec << 0 << endl;
+
+    cout << glb_mboot_ptr << endl;
 
     assert(1);
 
