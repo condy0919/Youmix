@@ -49,8 +49,8 @@ int kernel_main(uint32_t magic, multiboot_info_t *mb) {
 
     assert(1);
 
-    __asm__ __volatile__("int $0x3");
-    //__asm__ __volatile__("int $4");
+    //__asm__ __volatile__("int $0x3");
+    __asm__ __volatile__("int $4");
 
     return 0;
 }

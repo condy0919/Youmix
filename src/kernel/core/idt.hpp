@@ -21,15 +21,14 @@ struct Register {
     uint32_t edi; //
     uint32_t esi;
     uint32_t ebp;
-    uint32_t esp;
+    uint32_t useless_value; // esp originally
     uint32_t ebx;
     uint32_t edx;
     uint32_t ecx;
     uint32_t eax; // 由 pusha 压入
     uint32_t int_no; // 中断号
     uint32_t errno; // 错误号
-
-    uint32_t eip; // CPU自动压入
+    uint32_t eip; // 以下由CPU自动压入
     uint32_t cs;
     uint32_t eflags;
     uint32_t useresp;

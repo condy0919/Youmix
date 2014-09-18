@@ -127,7 +127,7 @@ void isr_common_stub() {
     __asm__ __volatile__("pusha");
     __asm__ __volatile__("movw %ds, %ax");
     __asm__ __volatile__("pushl %eax");
-    __asm__ __volatile__("movw $0x10, %ax;");
+    __asm__ __volatile__("movw $0x10, %ax");
     __asm__ __volatile__("movw %ax, %ds");
     __asm__ __volatile__("movw %ax, %es");
     __asm__ __volatile__("movw %ax, %fs");
