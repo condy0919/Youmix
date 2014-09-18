@@ -2,13 +2,12 @@
 #include "ostream.hpp"
 #include "asm_port.hpp"
 
-void timer_callback(Register *reg) {
-    static uint32_t cnt = 0;
-    std::cout << std::RED << "Tick: " << ++cnt << std::endl;
-}
-
 void init_timer(uint32_t freq) {
-    register_interrupt_handler(IRQ0, timer_callback);
+    register_interrupt_handler(IRQ0, [](Register *reg) {
+        static uint32_t cnt = 0;
+        (void)reg; // Ignore warnning.
+        std::cout << std::CYAN << "Tick: " << ++cnt << std::endl;
+    });
 
     uint32_t divisor = 1193180 / freq;
     outb(0x43, 0x36);

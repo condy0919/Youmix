@@ -257,7 +257,7 @@ __asm__ __volatile__("_irq_common_stub:");
 __asm__ __volatile__("pusha");
 __asm__ __volatile__("movw %ds, %ax");
 __asm__ __volatile__("push %eax");
-__asm__ __volatile__("movw $0x10, %eax");
+__asm__ __volatile__("movw $0x10, %ax");
 __asm__ __volatile__("movw %ax, %ds");
 __asm__ __volatile__("movw %ax, %es");
 __asm__ __volatile__("movw %ax, %fs");
