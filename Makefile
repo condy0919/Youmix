@@ -6,7 +6,7 @@ CC = i686-elf-gcc
 CXX = i686-elf-g++
 AS = i686-elf-as
 
-CXXFLAGS = -c -Wall -Wextra -ffreestanding -fno-exceptions -fno-rtti -ggdb -gstabs+ -std=c++11 -O2
+CXXFLAGS = -c -Wall -Wextra -ffreestanding -fno-exceptions -fno-rtti -ggdb -gstabs+ -std=c++11
 ASFLAGS = -g --gstabs
 
 CPP_SRCS = $(shell find . -iname "*.cpp")
@@ -30,7 +30,7 @@ INTERNAL_OBJS = $(CRTI_OBJ) $(OBJS) $(CRTN_OBJ)
 
 LINK: $(OBJ_LINK_LIST)
 	@echo -e "\033[31mLINK\033[0m kernel file"
-	$(CXX) -T tools/linker.ld -o $(KERNEL) $(OBJ_LINK_LIST) -ffreestanding -nostdlib -lgcc -O2
+	$(CXX) -T tools/linker.ld -o $(KERNEL) $(OBJ_LINK_LIST) -ffreestanding -nostdlib -lgcc
 
 .cpp.o:
 	@echo -e "\033[31mCompile\033[0m C++ source code $< ..."

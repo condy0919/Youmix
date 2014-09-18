@@ -70,16 +70,22 @@ void isr_handler(Register *reg) {
 }
 
 
-#define ISR_NOERRORCODE_MACRO(id) void isr##id() { \
-    __asm__ __volatile__("pushl $0x0"); \
-    __asm__ __volatile__("pushl $" #id); \
-    __asm__ __volatile__("jmp isr_common_stub"); \
-}
+// Declaration of isr0~31 and isr255
 
-#define ISR_ERRORCODE_MACRO(id) void isr##id() { \
+#define ISR_NOERRORCODE_MACRO(id) \
+    __asm__ __volatile__("_isr" #id ":"); \
+    __asm__ __volatile__("pushl $0"); \
     __asm__ __volatile__("pushl $" #id); \
-    __asm__ __volatile__("jmp isr_common_stub"); \
-}
+    __asm__ __volatile__("jmp _isr_common_stub"); \
+    __asm__ __volatile__("ret");
+
+
+#define ISR_ERRORCODE_MACRO(id) \
+    __asm__ __volatile__("_isr" #id ":"); \
+    __asm__ __volatile__("pushl $" #id); \
+    __asm__ __volatile__("jmp _isr_common_stub"); \
+    __asm__ __volatile__("ret");
+
 
 ISR_NOERRORCODE_MACRO(0)
 ISR_NOERRORCODE_MACRO(1)
@@ -120,29 +126,32 @@ ISR_NOERRORCODE_MACRO(31)
 // 用户自定义
 ISR_NOERRORCODE_MACRO(255)
 
+
 #undef ISR_NOERRORCODE_MACRO
 #undef ISR_ERRORCODE_MACRO
 
-void isr_common_stub() {
-    __asm__ __volatile__("pusha");
-    __asm__ __volatile__("movw %ds, %ax");
-    __asm__ __volatile__("pushl %eax");
-    __asm__ __volatile__("movw $0x10, %ax");
-    __asm__ __volatile__("movw %ax, %ds");
-    __asm__ __volatile__("movw %ax, %es");
-    __asm__ __volatile__("movw %ax, %fs");
-    __asm__ __volatile__("movw %ax, %gs");
-    __asm__ __volatile__("movw %ax, %ss");
-    __asm__ __volatile__("pushl %esp");
-    __asm__ __volatile__("call isr_handler");
-    __asm__ __volatile__("addl $0x4, %esp");
-    __asm__ __volatile__("popl %ebx");
-    __asm__ __volatile__("movw %bx, %ds");
-    __asm__ __volatile__("movw %bx, %es");
-    __asm__ __volatile__("movw %bx, %fs");
-    __asm__ __volatile__("movw %bx, %gs");
-    __asm__ __volatile__("movw %bx, %ss");
-    __asm__ __volatile__("popa");
-    __asm__ __volatile__("addl $0x8, %esp");
-    __asm__ __volatile__("iret");
-}
+// Declaration of isr_common_stub
+__asm__ __volatile__("_isr_common_stub:");
+__asm__ __volatile__("pusha");
+__asm__ __volatile__("movw %ds, %ax");
+__asm__ __volatile__("pushl %eax");
+__asm__ __volatile__("movw $0x10, %ax");
+__asm__ __volatile__("movw %ax, %ds");
+__asm__ __volatile__("movw %ax, %es");
+__asm__ __volatile__("movw %ax, %fs");
+__asm__ __volatile__("movw %ax, %gs");
+__asm__ __volatile__("movw %ax, %ss");
+__asm__ __volatile__("pushl %esp");
+__asm__ __volatile__("call isr_handler");
+__asm__ __volatile__("addl $0x4, %esp");
+__asm__ __volatile__("popl %ebx");
+__asm__ __volatile__("movw %bx, %ds");
+__asm__ __volatile__("movw %bx, %es");
+__asm__ __volatile__("movw %bx, %fs");
+__asm__ __volatile__("movw %bx, %gs");
+__asm__ __volatile__("movw %bx, %ss");
+__asm__ __volatile__("popa");
+__asm__ __volatile__("addl $0x8, %esp");
+__asm__ __volatile__("iret");
+__asm__ __volatile__("ret");
+
