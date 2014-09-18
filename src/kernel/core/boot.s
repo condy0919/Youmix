@@ -30,6 +30,7 @@ _start:
     call _init # run global constructors
 
     call init_gdt
+    call init_idt
 
     popl %eax
     pushl %ebx # ptr to multiboot_info_t

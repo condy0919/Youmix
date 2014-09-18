@@ -41,20 +41,11 @@ public:
     ostream &operator<<(int);
     ostream &operator<<(unsigned int);
     ostream &operator<<(const char *);
+    ostream &operator<<(const void *);
 
     ostream &operator<<(ostream &(*)(ostream &)); // for base and adjust
     ostream &operator<<(_Setw);                   // for setw
     ostream &operator<<(Color);                   // for foreground color
-
-    // FIXME: Please use hex instead of this.
-    template <typename T> ostream &operator<<(const T *p) {
-        uint32_t temp = flags();
-        set(fmt_hex);
-        unset(fmt_oct | fmt_dec);
-        *this << (unsigned long)p;
-        flags(temp);
-        return *this;
-    }
 
 private:
     template <typename Integral> void itoa(Integral x, char *buf) {

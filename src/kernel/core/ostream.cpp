@@ -121,6 +121,13 @@ ostream &ostream::operator<<(const char *s) {
     return *this;
 }
 
+ostream &ostream::operator<<(const void *p) {
+    uint32_t temp = flags();
+    *this << hex << (unsigned long)p;
+    flags(temp);
+    return *this;
+}
+
 ostream &left(ostream &s) {
     s.unset(fmt_right);
     s.set(fmt_left);

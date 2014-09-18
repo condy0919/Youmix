@@ -7,7 +7,7 @@
 #include "multiboot.h"
 #include "ostream.hpp"
 #include "assert.hpp"
-#include "gdt.hpp"
+//#include "gdt.hpp"
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
@@ -48,6 +48,9 @@ int kernel_main(uint32_t magic, multiboot_info_t *mb) {
     cout << glb_mboot_ptr << endl;
 
     assert(1);
+
+    __asm__ __volatile__("int $0x3");
+    //__asm__ __volatile__("int $4");
 
     return 0;
 }
