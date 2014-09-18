@@ -3,6 +3,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+/*
+ * Following is about IDT
+ */
+
 struct InterruptDescriptor {
     uint16_t offset0_15;
     uint16_t selector;
@@ -85,10 +89,63 @@ void isr30() __asm__("_isr30");
 void isr31() __asm__("_isr31");
 
 // 32~255用户自定义异常
-extern void isr255() __asm__("_isr255");
+void isr255() __asm__("_isr255");
 
 #ifdef __cplusplus
 extern "C"
 #endif
 void isr_common_stub() __asm__("_isr_common_stub");
+
+
+
+/*
+ * Following is about IRQ.
+ */
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void irq_handler(Register *);
+
+enum {
+    IRQ0 = 32,  // 计算机系统计时器
+    IRQ1 = 33,  // 键盘
+    IRQ2 = 34,  // 与 IRQ9 相接，MPU-401使用
+    IRQ3 = 35,  // 串口设备
+    IRQ4 = 36,  // 串口设备
+    IRQ5 = 37,  // 建议声卡使用
+    IRQ6 = 38,  // 软驱传输控制使用
+    IRQ7 = 39,  // 打印机传输控制使用
+    IRQ8 = 40,  // 即时时钟
+    IRQ9 = 41,  // 与 IRQ2 相接，可设定给其他硬件
+    IRQ10 = 42, // 建议网卡使用
+    IRQ11 = 43, // 建议AGP显卡使用
+    IRQ12 = 44, // 接PS/2鼠标，也可设定给其他硬件
+    IRQ13 = 45, // 协处理器使用
+    IRQ14 = 46, // IDE0传输控制使用
+    IRQ15 = 47  // IDE1传输控制使用
+};
+
+void irq0() __asm__("_irq0");
+void irq1() __asm__("_irq1");
+void irq2() __asm__("_irq2");
+void irq3() __asm__("_irq3");
+void irq4() __asm__("_irq4");
+void irq5() __asm__("_irq5");
+void irq6() __asm__("_irq6");
+void irq7() __asm__("_irq7");
+void irq8() __asm__("_irq8");
+void irq9() __asm__("_irq9");
+void irq10() __asm__("_irq10");
+void irq11() __asm__("_irq11");
+void irq12() __asm__("_irq12");
+void irq13() __asm__("_irq13");
+void irq14() __asm__("_irq14");
+void irq15() __asm__("_irq15");
+
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void irq_common_stub() __asm__("_irq_common_stub");
 
