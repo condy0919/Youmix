@@ -1,9 +1,9 @@
 #include "ostream.hpp"
 
-namespace std {
+namespace io {
 ostream cout;
 
-ostream::ostream() : _width(0), _flags(fmt_right | fmt_dec) {}
+ostream::ostream() : _width(0), _flags(fmt_right | fmt_dec), _fillch('\0') {}
 
 uint32_t ostream::flags() const { return _flags; }
 uint32_t ostream::flags(uint32_t _f) { return _flags = _f; }
@@ -13,6 +13,14 @@ uint32_t ostream::unset(uint32_t attr) { return flags(flags() & ~attr); }
 
 size_t ostream::width() const { return _width; }
 size_t ostream::width(size_t w) { return _width = w; }
+
+char ostream::fill() const { return _fillch; }
+char ostream::fill(char ch) {
+    char t = _fillch;
+    _fillch = ch;
+    return std::move(t);
+    return t;
+}
 
 ostream &ostream::printf(const char *fmt, ...) {
     va_list ap;
@@ -42,17 +50,12 @@ ostream &ostream::printf(const char *fmt, ...) {
             flags(temp);
             break;
         }
-        case 'c': {
-            char c = va_arg(ap, int);
-            *this << c;
+        case 'c':
+            *this << static_cast<char>(va_arg(ap, int));
             break;
-        }
-        case 'p': {
-            void *p = va_arg(ap, void *);
-            *this << p;
+        case 'p':
+            *this << va_arg(ap, void *);
             break;
-        }
-
         default:
             break;
         }
@@ -71,6 +74,11 @@ ostream &ostream::operator<<(Color fg) {
 
 ostream &ostream::operator<<(_Setw w) {
     width(w._w);
+    return *this;
+}
+
+ostream &ostream::operator<<(_Setfill f) {
+    fill(f._c);
     return *this;
 }
 
@@ -101,6 +109,14 @@ ostream &ostream::operator<<(unsigned int x) {
     return *this << static_cast<unsigned long>(x);
 }
 
+#ifdef __i386__
+ostream &ostream::operator<<(uint64_t x) {
+    char buf[32] = {'\0'};
+    itoa(x, buf);
+    return *this << buf;
+}
+#endif
+
 ostream &ostream::operator<<(const char *s) {
     size_t outlen = strlen(s);
     auto prcn = [&](char ch, size_t n) {
@@ -109,11 +125,11 @@ ostream &ostream::operator<<(const char *s) {
     };
     if (width() > outlen) {
         if (flags() & fmt_right) {
-            prcn(' ', width() - outlen);
+            prcn(_fillch ? _fillch : ' ', width() - outlen);
             puts(s);
         } else {
             puts(s);
-            prcn(' ', width() - outlen);
+            prcn(_fillch ? _fillch : ' ', width() - outlen);
         }
     } else {
         puts(s);
@@ -163,8 +179,11 @@ ostream &endl(ostream &s) {
     s.width(0);
     s.bg_color(BLACK);
     s.fg_color(WHITE);
+    s.fill('\0');
     return s;
 }
 
 _Setw setw(size_t n) { return {n}; }
+
+_Setfill setfill(char _c) { return {_c}; }
 }

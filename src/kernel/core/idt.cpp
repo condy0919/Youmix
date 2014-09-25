@@ -115,7 +115,7 @@ void isr_handler(Register *reg) {
     if (interrupt_handlers[reg->int_no])
         interrupt_handlers[reg->int_no](reg);
     else
-        std::cout << "Unhandled interrupt " << reg->int_no << std::endl;
+        io::cout << "Unhandled interrupt " << reg->int_no << io::endl;
 }
 
 void register_interrupt_handler(uint8_t id, decltype(isr_handler) *h) {

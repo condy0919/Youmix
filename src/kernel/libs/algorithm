@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "utility"
+
 
 namespace std {
 template <typename InputIteraotr, typename Size, typename OutputIterator>
@@ -27,9 +29,9 @@ OutputIterator fill_n(OutputIterator first, Size n, const T &val) {
 }
 
 template <typename T> void swap(T &a, T &b) {
-    T t = a;
-    a = b;
-    b = t;
+    T t(std::move(a));
+    a = std::move(b);
+    b = std::move(t);
 }
 
 template <typename ForwardIter>

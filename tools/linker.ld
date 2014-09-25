@@ -33,6 +33,7 @@ SECTIONS
     {
         *(.stabstr)
     }
+
     /DISCARD/ :
     {
         *(.comment) 

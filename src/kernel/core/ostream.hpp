@@ -1,10 +1,14 @@
 #pragma once
 
-#include "screen.hpp"
 #include <stdarg.h>
+#include "screen.hpp"
 
 struct _Setw {
     size_t _w;
+};
+
+struct _Setfill {
+    char _c;
 };
 
 enum Fmtflags {
@@ -16,7 +20,7 @@ enum Fmtflags {
 };
 
 
-namespace std {
+namespace io {
 class ostream : public screen {
 public:
     ostream();
@@ -32,6 +36,9 @@ public:
     size_t width() const;
     size_t width(size_t);
 
+    char fill() const;
+    char fill(char);
+
     // C-style print
     ostream &printf(const char *, ...);
 
@@ -40,15 +47,17 @@ public:
     ostream &operator<<(unsigned long);
     ostream &operator<<(int);
     ostream &operator<<(unsigned int);
+    ostream &operator<<(uint64_t);
     ostream &operator<<(const char *);
     ostream &operator<<(const void *);
 
     ostream &operator<<(ostream &(*)(ostream &)); // for base and adjust
     ostream &operator<<(_Setw);                   // for setw
+    ostream &operator<<(_Setfill);                // for setfill
     ostream &operator<<(Color);                   // for foreground color
 
 private:
-    template <typename Integral> void itoa(Integral x, char *buf) {
+    template <typename Integral> char *itoa(Integral x, char *buf) {
         const char *digits = "9876543210123456789ABCDEF";
         const char *zero = digits + 9;
 
@@ -68,11 +77,13 @@ private:
             *p++ = '0';
         }
         std::reverse(buf, p);
+        return p;
     }
 
 private:
     size_t _width;
     uint32_t _flags;
+    char _fillch;
 };
 
 ostream &left(ostream &);
@@ -85,6 +96,7 @@ ostream &hex(ostream &);
 ostream &endl(ostream &);
 
 _Setw setw(size_t n);
+_Setfill setfill(char c);
 
 extern ostream cout;
 }

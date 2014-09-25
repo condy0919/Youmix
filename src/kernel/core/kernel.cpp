@@ -8,6 +8,7 @@
 #include "ostream.hpp"
 #include "assert.hpp"
 #include "timer.hpp"
+#include "pmm.hpp"
 //#include "gdt.hpp"
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
@@ -27,34 +28,37 @@ multiboot_info_t *glb_mboot_ptr;
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 int kernel_main(uint32_t magic, multiboot_info_t *mb) {
+    (void)magic;
+    (void)mb;
     //glb_mboot_ptr = mb;
 
     //init_gdt();
 
-    using namespace std;
+    using namespace io;
 
     cout.clear();
     cout << "hello, world" << endl;
-    cout << std::GREEN << "Pachouli GO!" << endl;
-    cout << left << setw(12) << 0xff << " JustDoIt" << endl;
-    cout << hex << 100 << dec << 99 << setw(4) << 0 << endl;
-    cout.printf("%d %c %s\n", -1, 'b', "Konpaku Youmu");
-    (cout << std::RED << "RWBY\n").puts("This is a newline\n");
-    cout << "Still RED" << endl;
-    cout << "Normal Color" << endl;
-    std::cout << std::BROWN << "Yeah!" << std::endl;
-    cout << hex << magic << " " << mb << endl;
-    cout << dec << 0 << endl;
+    //cout << std::GREEN << "Pachouli GO!" << endl;
+    //cout << left << setw(12) << 0xff << " JustDoIt" << endl;
+    //cout << hex << 100 << dec << 99 << setw(4) << 0 << endl;
+    //cout.printf("%d %c %s\n", -1, 'b', "Konpaku Youmu");
+    //(cout << std::RED << "RWBY\n").puts("This is a newline\n");
+    //cout << "Still RED" << endl;
+    //cout << "Normal Color" << endl;
+    //std::cout << std::BROWN << "Yeah!" << std::endl;
+    //cout << hex << magic << " " << mb << endl;
+    //cout << dec << 0 << endl;
 
     cout << glb_mboot_ptr << endl;
 
     assert(1);
 
-    __asm__ __volatile__("int $0x3");
-    __asm__ __volatile__("int $0x4");
+    //__asm__ __volatile__("int $0x3");
+    //__asm__ __volatile__("int $0x4");
 
-    init_timer(200);
-    __asm__ __volatile__("sti"); // Just for timer.
+    //init_timer(200);
+    //__asm__ __volatile__("sti"); // Just for timer.
+    memory_layout();
 
     return 0;
 }

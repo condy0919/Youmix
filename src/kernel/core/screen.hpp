@@ -8,7 +8,7 @@
 #include "../libs/algorithm"
 #include "../libs/string.h"
 
-namespace std {
+namespace io {
 enum Color {
     BLACK = 0,
     BLUE = 1,
@@ -38,15 +38,15 @@ public:
     void putc(const char);
     void gotoxy(uint8_t, uint8_t);
     
-    std::Color bg_color() const;
-    std::Color bg_color(std::Color);
-    std::Color fg_color() const;
-    std::Color fg_color(std::Color);
+    io::Color bg_color() const;
+    io::Color bg_color(io::Color);
+    io::Color fg_color() const;
+    io::Color fg_color(io::Color);
 
 private:
     const uint8_t MAXROW = 25, MAXCOL = 80;
     uint16_t *const vbuf = (uint16_t * const)0xB8000;
-    const uint16_t BLANK = (((std::BLACK << 4) | std::WHITE) << 8) | ' ';
+    const uint16_t BLANK = (((io::BLACK << 4) | io::WHITE) << 8) | ' ';
     uint8_t row, col;
     uint16_t color;
 

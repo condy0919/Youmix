@@ -9,7 +9,7 @@ void print_seg_status() {
     __asm__ __volatile__("mov %%es, %0" : "=m"(es));
     __asm__ __volatile__("mov %%ss, %0" : "=m"(ss));
 
-    using namespace std;
+    using namespace io;
     cout /*<< dec << times*/ << ": @ring" << (cs & 0x3) << endl;
     cout /*<< dec << times*/ << ": cs = " << hex << cs << endl;
     cout /*<< dec << times*/ << ": ds = " << hex << ds << endl;
@@ -23,7 +23,7 @@ static void print_stack_trace() {
     extern multiboot_info_t *glb_mboot_ptr;
     Elf_info elf(glb_mboot_ptr);
 
-    using namespace std;
+    using namespace io;
     __asm__ __volatile__("mov %%ebp, %0" : "=r"(ebp));
     while (ebp) {
         eip = ebp + 1; // 返回地址
@@ -33,8 +33,8 @@ static void print_stack_trace() {
 }
 
 void kernel_panic() {
-    using namespace std;
-    cout << std::RED << "*** kernel panic ***" << endl;
+    using namespace io;
+    cout << RED << "*** kernel panic ***" << endl;
     print_stack_trace();
-    cout << std::RED << "***" << endl;
+    cout << RED << "***" << endl;
 }
