@@ -183,7 +183,7 @@ ISR_NOERRORCODE_MACRO(255)
 #undef ISR_NOERRORCODE_MACRO
 #undef ISR_ERRORCODE_MACRO
 
-// Declaration of isr_common_stub
+// Definition of isr_common_stub
 __asm__ __volatile__("_isr_common_stub:");
 __asm__ __volatile__("pusha");
 __asm__ __volatile__("movw %ds, %ax");
@@ -211,7 +211,7 @@ __asm__ __volatile__("ret");
 
 
 
-// Declaration of isq0~15
+// Definition of isq0~15
 
 
 void irq_handler(Register *reg) {

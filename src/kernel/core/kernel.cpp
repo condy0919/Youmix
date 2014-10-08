@@ -37,19 +37,19 @@ int kernel_main(uint32_t magic, multiboot_info_t *mb) {
     using namespace io;
 
     cout.clear();
-    cout << "hello, world" << endl;
-    //cout << std::GREEN << "Pachouli GO!" << endl;
+    cout << "Hello, World" << endl;
+    cout << GREEN << "Pachouli GO!" << endl;
     //cout << left << setw(12) << 0xff << " JustDoIt" << endl;
     //cout << hex << 100 << dec << 99 << setw(4) << 0 << endl;
     //cout.printf("%d %c %s\n", -1, 'b', "Konpaku Youmu");
-    //(cout << std::RED << "RWBY\n").puts("This is a newline\n");
+    //(cout << RED << "RWBY\n").puts("This is a newline\n");
     //cout << "Still RED" << endl;
     //cout << "Normal Color" << endl;
-    //std::cout << std::BROWN << "Yeah!" << std::endl;
+    //cout << BROWN << "Yeah!" << endl;
     //cout << hex << magic << " " << mb << endl;
     //cout << dec << 0 << endl;
 
-    cout << glb_mboot_ptr << endl;
+    //cout << glb_mboot_ptr << endl;
 
     assert(1);
 

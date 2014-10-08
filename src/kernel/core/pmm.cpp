@@ -10,6 +10,8 @@ void memory_layout() {
 
     auto *beg = (multiboot_mmap_entry *)mmap_addr,
          *end = beg + mmap_len / sizeof(*beg);
+
+    // io::cout << "mmap_len = " << io::dec << mmap_len << io::endl;
     for (auto iter = beg; iter != end; ++iter)
         io::cout << "base_addr = " << io::hex << io::setw(16) << iter->addr
                  << io::setw(9) << " length = " << iter->len
