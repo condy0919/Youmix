@@ -2,9 +2,8 @@
 
 #include <stdint.h>
 
-#define offsetof(type, member) ((size_t)&((type*)0)->member)
 #define container_of(ptr, type, member) \
-    (type *)((char *)ptr - offsetof(type, member))
+    (type *)((char *)ptr - ((size_t)&((type*)0)->member))
 
 struct list_head {
     struct list_head *prev, *next;
@@ -51,7 +50,7 @@ static inline void __list_del(struct list_head *prev, struct list_head *next) {
 
 static inline void list_del(struct list_head *entry) {
     __list_del(entry->prev, entry->next);
-    entry->prev = entry->next = 0;
+    entry->prev = entry->next = entry;
 }
 
 static inline bool list_empty(const struct list_head *head) {
