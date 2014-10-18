@@ -21,8 +21,8 @@ struct page {
         count = 0;
     }
 
-    void *p_addr;
-    void *v_addr;
+    uint32_t p_addr;
+    uint32_t v_addr;
     int order;
     uint32_t count;
     struct list_head list;

@@ -1,5 +1,6 @@
-#include "elf.hpp"
+#include "../include/elf.hpp"
 #include "../libs/string.h"
+#include "../include/vmm.hpp"
 
 Elf_info::Elf_info(multiboot_info_t *mb) {
     elf_section_header_t *sh = (elf_section_header_t *)mb->u.elf_sec.addr;
@@ -7,10 +8,10 @@ Elf_info::Elf_info(multiboot_info_t *mb) {
     for (size_t i = 0; i < mb->u.elf_sec.num; ++i) {
         const char *name = (const char *)(shstrtab + sh[i].name);
         if (strcmp(name, ".strtab") == 0) {
-            strtab = (const char *)sh[i].addr;
+            strtab = (const char *)sh[i].addr/* + KERNEL_VIRTUAL_BASE*/;
             strtabsize = sh[i].size;
         } else if (strcmp(name, ".symtab") == 0) {
-            symtab = (elf_symbol_t *)sh[i].addr;
+            symtab = (elf_symbol_t *)sh[i].addr /*+ KERNEL_VIRTUAL_BASE*/;
             symtabsize = sh[i].size;
         }
     }

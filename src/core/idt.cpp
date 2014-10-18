@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "idt.hpp"
-#include "ostream.hpp"
-#include "asm_port.hpp"
+#include "../include/idt.hpp"
+#include "../include/ostream.hpp"
+#include "../include/asm.hpp"
 
 InterruptDescriptor idtdesc[256];
 

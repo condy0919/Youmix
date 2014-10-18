@@ -4,12 +4,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "multiboot.h"
-#include "ostream.hpp"
-#include "assert.hpp"
-#include "timer.hpp"
-#include "pmm.hpp"
-//#include "gdt.hpp"
+#include "../include/multiboot.h"
+#include "../include/ostream.hpp"
+#include "../include/assert.hpp"
+#include "../include/timer.hpp"
+//#include "../include/gdt.hpp"
+//#include "../include/idt.hpp"
+#include "../include/pmm.hpp"
+#include "../include/vmm.hpp"
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
@@ -27,12 +29,13 @@ multiboot_info_t *glb_mboot_ptr;
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
-int kernel_main(uint32_t magic, multiboot_info_t *mb) {
-    (void)magic;
-    (void)mb;
+int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
+    //(void)magic;
+    //(void)mb;
     //glb_mboot_ptr = mb;
 
     //init_gdt();
+    //init_idt();
 
     using namespace io;
 
@@ -48,8 +51,10 @@ int kernel_main(uint32_t magic, multiboot_info_t *mb) {
     //cout << BROWN << "Yeah!" << endl;
     //cout << hex << magic << " " << mb << endl;
     //cout << dec << 0 << endl;
-
+    
     //cout << glb_mboot_ptr << endl;
+
+    //cout << hex << mb->mem_upper << dec << endl;
 
     assert(1);
 
@@ -72,11 +77,13 @@ int kernel_main(uint32_t magic, multiboot_info_t *mb) {
     }
     cout << "available pages after test: " << zone.free_pages << endl;
 
+    int *p = (int *)0xffffffff;
+    *p = 10;
+
     //auto *p2 = zone.allocate(10);
     //cout << "address: " << p2->p_addr << endl;
     //while (auto *p = zone.allocate(10))
     //    cout << "address: " << p->p_addr << endl;
-
 
     return 0;
 }

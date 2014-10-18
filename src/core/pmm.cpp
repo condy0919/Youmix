@@ -1,5 +1,5 @@
-#include "pmm.hpp"
-#include "ostream.hpp"
+#include "../include/pmm.hpp"
+#include "../include/ostream.hpp"
 
 zone_t zone;
 
@@ -42,7 +42,7 @@ zone_t::zone_t() : free_pages(0), max_free_pages(0) {
             // initialize mem_map
             for (uint32_t mp = mm_beg; mp < mm_end && free_pages < RAM_MAXPAGE;
                  ++free_pages, mp += PAGE_SIZE) {
-                mem_map[free_pages].p_addr = (void *)mp;
+                mem_map[free_pages].p_addr = mp;
             }
             max_free_pages = free_pages;
 
@@ -67,7 +67,7 @@ struct page *zone_t::allocate(int order) {
             break;
     }
     if (cur_order > 10)
-        return 0;
+        return nullptr;
 
     free_pages -= (1UL << order);
     struct page *p = free_area[cur_order].front();
@@ -91,11 +91,13 @@ void zone_t::deallocate(struct page *p, int order) {
                p->order == order && p->count == 0 && page_reserved(p);
     };
 
+    if (!p)
+        return;
+
     free_pages += (1UL << order);
 
     uint32_t page_idx = p - mem_map, buddy_idx = 0;
-    p->order = 0;
-    p->count = 0;
+    p->reset(0);
     while (order < 10) {
         buddy_idx = page_idx ^ (1UL << order);
         struct page *buddy = mem_map + buddy_idx;

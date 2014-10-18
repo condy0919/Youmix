@@ -1,4 +1,4 @@
-#include "ostream.hpp"
+#include "../include/ostream.hpp"
 
 namespace io {
 ostream cout;
@@ -18,7 +18,6 @@ char ostream::fill() const { return _fillch; }
 char ostream::fill(char ch) {
     char t = _fillch;
     _fillch = ch;
-    return std::move(t);
     return t;
 }
 
@@ -180,7 +179,7 @@ ostream &endl(ostream &s) {
     s.bg_color(BLACK);
     s.fg_color(WHITE);
     s.fill('\0');
-    return s;
+    return dec(s); // not compatible with stdandard.
 }
 
 _Setw setw(size_t n) { return {n}; }

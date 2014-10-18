@@ -1,4 +1,4 @@
-#include "assert.hpp"
+#include "../include/assert.hpp"
 
 void print_seg_status() {
     //static int times = 0;

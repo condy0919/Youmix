@@ -1,6 +1,6 @@
-#include "timer.hpp"
-#include "ostream.hpp"
-#include "asm_port.hpp"
+#include "../include/timer.hpp"
+#include "../include/ostream.hpp"
+#include "../include/asm.hpp"
 
 void init_timer(uint32_t freq) {
     register_interrupt_handler(IRQ0, [](Register *reg) {

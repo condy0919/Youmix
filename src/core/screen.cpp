@@ -1,4 +1,4 @@
-#include "screen.hpp"
+#include "../include/screen.hpp"
 
 screen::screen() : row(0), col(0), color((io::BLACK << 4) | io::WHITE) {}
 

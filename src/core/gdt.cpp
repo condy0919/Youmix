@@ -1,4 +1,4 @@
-#include "gdt.hpp"
+#include "../include/gdt.hpp"
 
 #define GDTSIZE 8
 
@@ -39,6 +39,7 @@ void init_gdt() {
                          "movw %ax, %es;"
                          "movw %ax, %fs;"
                          "movw %ax, %gs;"
+                         "movw %ax, %ss;"
                          "ljmp $0x08, $flush;" // jumps to code segment, forces
                                                // CPU to flush pipeline and
                                                // cache

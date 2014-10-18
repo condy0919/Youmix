@@ -1,35 +1,36 @@
 ENTRY(_start)
+OUTPUT_FORMAT(elf32-i386)
 SECTIONS
 {
-    . = 1M;
-
-    .text BLOCK(4K) : ALIGN(4K)
+    /*. = 1M;*/
+    . = 0xc0100000;
+    .text ALIGN(4K) : AT(ADDR(.text) - 0xc0000000)
     {
         *(.multiboot)
         *(.text)
     }
 
-    .rodata BLOCK(4K) : ALIGN(4K)
+    .rodata ALIGN(4K) : AT(ADDR(.rodata) - 0xc0000000)
     {
         *(.rodata)
     }
 
-    .data BLOCK(4K) : ALIGN(4K)
+    .data ALIGN(4K) : AT(ADDR(.data) - 0xc0000000)
     {
         *(.data)
     }
 
-    .bss BLOCK(4K) : ALIGN(4K)
+    .bss ALIGN(4K) : AT(ADDR(.bss) - 0xc0000000)
     {
         *(COMMON)
         *(.bss)
         *(.bootstrap_stack)
     }
-    .stab BLOCK(4K) : ALIGN(4K)
+    .stab ALIGN(4K) : AT(ADDR(.stab) - 0xc0000000)
     {
         *(.stab)
     }
-    .stabstr BLOCK(4K) : ALIGN(4K)
+    .stabstr ALIGN(4K) : AT(ADDR(.stabstr) - 0xc0000000)
     {
         *(.stabstr)
     }

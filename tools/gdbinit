@@ -1,5 +1,5 @@
 file Youmix
 target remote: 1234
-br kernel_main
+br _start
 c
 
