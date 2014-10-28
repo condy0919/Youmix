@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_ELF_H_
+#define _YOUMIX_ELF_H_
 
 #include <stdint.h>
 #include <stddef.h>
@@ -40,3 +41,5 @@ private:
     const char *strtab;
     uint32_t strtabsize;
 };
+
+#endif

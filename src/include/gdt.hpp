@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_GDT_H_
+#define _YOUMIX_GDT_H_
 
 #include <stdint.h>
 #include <stddef.h>
@@ -39,3 +40,4 @@ extern "C"
 #endif
 void init_gdt();
 
+#endif

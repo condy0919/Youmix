@@ -7,7 +7,7 @@ __attribute__((aligned(PAGE_SIZE))) uint32_t
     page_table_entry[PAGE_TABLE_ENTRY_COUNT][1024];
 
 
-void init_page() {
+void init_page_dir() {
     uint32_t kbase = PD_IDX(KERNEL_VIRTUAL_BASE) + 1;
 
     for (uint32_t i = kbase; i < PAGE_TABLE_ENTRY_COUNT + kbase; ++i) {
@@ -21,6 +21,9 @@ void init_page() {
     }
 
     register_interrupt_handler(14, page_fault);
+
+    //extern zone_t zone;
+    //zone.init_zone();
 }
 
 void map(uint32_t *pd, uint32_t va, uint32_t pa, uint32_t flags) {
@@ -30,11 +33,9 @@ void map(uint32_t *pd, uint32_t va, uint32_t pa, uint32_t flags) {
     uint32_t *pte = (uint32_t *)(pd[pd_idx] & PAGE_MASK);
 
     if (!pte) {
-        // FIXME: BUGS
-        struct page *page = zone.allocate(0);
-        pte = (uint32_t *)page->p_addr;
-        page->v_addr = va;
-        pd[pd_idx] = page->p_addr | PAGE_PRESENT | PAGE_WRITABLE;
+        void *page = zone.alloc(PAGE_SIZE);
+        pte = (uint32_t *)page;
+        pd[pd_idx] = (uint32_t)pte | PAGE_PRESENT | PAGE_WRITABLE;
         memset(pte, 0, PAGE_SIZE);
     }
 

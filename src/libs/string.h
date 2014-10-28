@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_CSTRING_H_
+#define _YOUMIX_CSTRING_H_
 
 #include <stdint.h>
 #include <stddef.h>
@@ -20,4 +21,6 @@ char *strcat(char *, const char *);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

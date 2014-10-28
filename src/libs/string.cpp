@@ -64,19 +64,19 @@ size_t strlen(const char *s) {
     register const char *p = s;
 
     if (*p && (uint32_t)p % 0x4)
-            ++p;
+        ++p;
     if (!*p)
-            return p - s;
+        return p - s;
 
     if (*p && (uint32_t)p % 0x4)
-            ++p;
+        ++p;
     if (!*p)
-            return p - s;
+        return p - s;
 
     if (*p && (uint32_t)p % 0x4)
-            ++p;
+        ++p;
     if (!*p)
-            return p - s;
+        return p - s;
 
     uint32_t lomagic = 0x01010101, himagic = 0x80808080;
     for (uint32_t *longword = (uint32_t*)p; ;++longword) {

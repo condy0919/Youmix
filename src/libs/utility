@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_UTILITY_H_
+#define _YOUMIX_UTILITY_H_
 
 namespace std {
 template <typename T> struct remove_reference { typedef T type; };
@@ -23,3 +24,5 @@ template <typename T, typename U = T> T exchange(T &obj, U &&new_value) {
     return old_value;
 }
 }
+
+#endif

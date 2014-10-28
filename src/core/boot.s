@@ -64,12 +64,13 @@ StartInHighHalf:
     leal glb_mboot_ptr, %ecx
     movl %ebx, (%ecx)
 
+    call init_page_dir
+
     call _init # call global constructors
 
     call init_gdt
     call init_idt
 
-    call init_page
 
     #popl %eax
     #pushl %ebx # ptr to multiboot_info_t

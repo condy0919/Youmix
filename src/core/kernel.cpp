@@ -69,21 +69,19 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
 
     cout << "available pages before test: " << zone.free_pages << endl;
     for (int i = 0; i < 100; ++i) {
-        struct page *store[11];
+        void *store[11];
+        for (int order = 0; order <= 10; ++order) {
+            store[order] = zone.alloc(999);
+            *(int*)store[order] = 10;
+        }
         for (int order = 0; order <= 10; ++order)
-            store[order] = zone.allocate(5);
-        for (int order = 0; order <= 10; ++order)
-            zone.deallocate(store[order], 5);
+            zone.dealloc(store[order]);
     }
     cout << "available pages after test: " << zone.free_pages << endl;
 
+    // It should cause page fault.
     int *p = (int *)0xffffffff;
     *p = 10;
-
-    //auto *p2 = zone.allocate(10);
-    //cout << "address: " << p2->p_addr << endl;
-    //while (auto *p = zone.allocate(10))
-    //    cout << "address: " << p->p_addr << endl;
 
     return 0;
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_NUMERIC_H_
+#define _YOUMIX_NUMERIC_H_
 
 namespace std {
 template <typename ForwardIterator, typename T>
@@ -10,3 +11,5 @@ void iota(ForwardIterator first, ForwardIterator last, T val) {
     }
 }
 }
+
+#endif

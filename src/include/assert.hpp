@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_ASSERT_H_
+#define _YOUMIX_ASSERT_H_
 
 #include "ostream.hpp"
 #include "elf.hpp"
@@ -21,3 +22,4 @@
 void kernel_panic();
 void print_seg_status();
 
+#endif

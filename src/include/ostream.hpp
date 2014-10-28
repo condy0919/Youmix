@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_OSTREAM_H_
+#define _YOUMIX_OSTREAM_H_
 
 #include <stdarg.h>
 #include "screen.hpp"
@@ -100,3 +101,5 @@ _Setfill setfill(char c);
 
 extern ostream cout;
 }
+
+#endif

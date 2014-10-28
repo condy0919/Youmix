@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_IDT_H_
+#define _YOUMIX_IDT_H_
 
 #include <stdint.h>
 #include <stddef.h>
@@ -149,3 +150,4 @@ extern "C"
 #endif
 void irq_common_stub() __asm__("_irq_common_stub");
 
+#endif

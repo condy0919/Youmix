@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_UTIL_LIST_H_
+#define _YOUMIX_UTIL_LIST_H_
 
 #include <stdint.h>
 
@@ -57,3 +58,8 @@ static inline bool list_empty(const struct list_head *head) {
     return head->next == head;
 }
 
+static inline bool list_isolated(const struct list_head* p) {
+    return p->next == p;
+}
+
+#endif

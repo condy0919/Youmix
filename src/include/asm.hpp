@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_ASM_H_
+#define _YOUMIX_ASM_H_
 
 #include <stdint.h>
 #include <stddef.h>
@@ -27,3 +28,4 @@ static inline uint16_t inw(uint16_t port) {
     return ret;
 }
 
+#endif

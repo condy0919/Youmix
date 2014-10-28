@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _YOUMIX_PMM_H_
+#define _YOUMIX_PMM_H_
 
 #include <stdint.h>
 #include <stddef.h>
@@ -12,19 +13,9 @@ const uint32_t RAM_MAXPAGE = RAM_MAXSIZE / PAGE_SIZE;
 const uint32_t PAGE_MASK = 0xffffffff ^ (PAGE_SIZE - 1);
 
 struct page {
-    page()
-        : p_addr(0), v_addr(0), order(0), count(0), list(LIST_HEAD_INIT(list)) {
-    }
+    page() : order(0), list(LIST_HEAD_INIT(list)) {}
 
-    void reset(int _order) {
-        order = _order;
-        count = 0;
-    }
-
-    uint32_t p_addr;
-    uint32_t v_addr;
     int order;
-    uint32_t count;
     struct list_head list;
 };
 
@@ -46,16 +37,21 @@ struct free_area_t {
 
 
 struct zone_t {
-    zone_t();
+    zone_t();// = default;
 
-    struct page *allocate(int);
-    void deallocate(struct page *, int);
+    void init_zone();
+    void *alloc(int);
+    void dealloc(void *);
 
     uint32_t free_pages;
     free_area_t free_area[11];
     uint32_t max_free_pages;
-    page mem_map[RAM_MAXPAGE];
+    uint8_t (*mem_map)[PAGE_SIZE];
+
+private:
+    int find_order(int);
 };
 
 void memory_layout();
 
+#endif
