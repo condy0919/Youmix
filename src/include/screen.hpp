@@ -6,7 +6,7 @@
 #include <stdarg.h>
 
 #include "asm.hpp"
-#include "vmm.hpp"
+#include "klayout.hpp"
 #include "../libs/algorithm"
 #include "../libs/string.h"
 
@@ -29,7 +29,7 @@ enum Color {
     LIGHT_BROWN = 14,
     WHITE = 15
 };
-}
+} // namespace IO
 
 class screen {
 public:

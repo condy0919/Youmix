@@ -10,8 +10,7 @@
 #include "../include/timer.hpp"
 //#include "../include/gdt.hpp"
 //#include "../include/idt.hpp"
-#include "../include/pmm.hpp"
-#include "../include/vmm.hpp"
+#include "../include/mm.hpp"
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
@@ -25,6 +24,7 @@
 #endif
 
 multiboot_info_t *glb_mboot_ptr;
+extern multiboot_info_t* glb_mboot_ptr;
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -63,25 +63,24 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
 
     //init_timer(200);
     //__asm__ __volatile__("sti"); // Just for timer.
-    memory_layout();
 
-    extern zone_t zone;
+    Memory::zone_t::memory_layout();
 
-    cout << "available pages before test: " << zone.free_pages << endl;
+    cout << "available pages before test: " << Memory::zone.free_pages << endl;
     for (int i = 0; i < 100; ++i) {
         void *store[11];
         for (int order = 0; order <= 10; ++order) {
-            store[order] = zone.alloc(999);
+            store[order] = Memory::zone.alloc(999);
             *(int*)store[order] = 10;
         }
         for (int order = 0; order <= 10; ++order)
-            zone.dealloc(store[order]);
+            Memory::zone.dealloc(store[order]);
     }
-    cout << "available pages after test: " << zone.free_pages << endl;
+    cout << "available pages after test: " << Memory::zone.free_pages << endl;
 
     // It should cause page fault.
-    int *p = (int *)0xffffffff;
-    *p = 10;
+    //int *p = (int *)0xffffffff;
+    //*p = 10;
 
     return 0;
 }

@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
+
+namespace GDT {
+
 /*
  * Be cautious about this.
  */
@@ -34,6 +37,9 @@ struct GDTPointer {
     uint16_t limit;
     uint32_t base;
 } __attribute((packed));
+
+void init_gdt();
+} // namespace GDT
 
 #ifdef __cplusplus
 extern "C"

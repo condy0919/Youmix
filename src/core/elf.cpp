@@ -1,6 +1,6 @@
 #include "../include/elf.hpp"
 #include "../libs/string.h"
-#include "../include/vmm.hpp"
+#include "../include/klayout.hpp"
 
 Elf_info::Elf_info(multiboot_info_t *mb) {
     elf_section_header_t *sh = (elf_section_header_t *)mb->u.elf_sec.addr;

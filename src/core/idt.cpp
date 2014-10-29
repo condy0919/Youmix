@@ -5,6 +5,8 @@
 #include "../include/ostream.hpp"
 #include "../include/asm.hpp"
 
+namespace IDT {
+
 InterruptDescriptor idtdesc[256];
 
 IDTPointer idt_ptr;
@@ -108,7 +110,7 @@ void init_idt() {
     // 实现系统调用
     fn(255, (uint32_t)isr255, 0x08, 0x8e);
 
-    __asm__ __volatile__("lidtl (idt_ptr)");
+    __asm__ __volatile__("lidtl (%0)" : : "m"(idt_ptr));
 }
 
 void isr_handler(Register *reg) {
@@ -276,4 +278,8 @@ __asm__ __volatile__("popa");
 __asm__ __volatile__("addl $0x8, %esp");
 __asm__ __volatile__("iret");
 __asm__ __volatile__("ret");
+}
 
+void init_idt() {
+    IDT::init_idt();
+}

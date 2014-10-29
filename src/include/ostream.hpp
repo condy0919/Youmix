@@ -100,6 +100,6 @@ _Setw setw(size_t n);
 _Setfill setfill(char c);
 
 extern ostream cout;
-}
+} // namespace IO
 
 #endif

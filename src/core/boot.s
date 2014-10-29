@@ -22,7 +22,8 @@ stack_top:
 .set _start, (start - 0xc0000000)
 .type _start, @function
 start:
-    leal page_directory, %ecx
+    leal _ZN6Memory14page_directoryE, %ecx # Memory::page_directory
+    #leal page_directory, %ecx
     subl $0xc0000000, %ecx # Physical address
     movl %ecx, %cr3
     movl $0x83, (%ecx) # 4MB PAGESIZE | PRESENT | WRITABLE

@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+namespace IDT {
+
 /*
  * Following is about IDT
  */
@@ -47,9 +49,6 @@ void isr_handler(Register *);
 
 void register_interrupt_handler(uint8_t id, decltype(isr_handler) *);
 
-#ifdef __cplusplus
-extern "C"
-#endif
 void init_idt();
 
 // ISR中断服务程序
@@ -149,5 +148,13 @@ void irq15() __asm__("_irq15");
 extern "C"
 #endif
 void irq_common_stub() __asm__("_irq_common_stub");
+
+} // namespace IDT
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void init_idt();
+
 
 #endif

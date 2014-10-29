@@ -3,7 +3,7 @@
 #include "../include/asm.hpp"
 
 void init_timer(uint32_t freq) {
-    register_interrupt_handler(IRQ0, [](Register *reg) {
+    register_interrupt_handler(IDT::IRQ0, [](IDT::Register *reg) {
         static uint32_t cnt = 0;
         (void)reg; // Ignore warnning.
         io::cout << io::CYAN << "Tick: " << ++cnt << io::endl;

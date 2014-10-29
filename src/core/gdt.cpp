@@ -1,6 +1,7 @@
 #include "../include/gdt.hpp"
 
-#define GDTSIZE 8
+namespace GDT {
+const uint32_t GDTSIZE = 8;
 
 SegmentDescriptor gdtdesc[GDTSIZE];
 GDTPointer gdt_ptr;
@@ -32,7 +33,7 @@ void init_gdt() {
     fn(gdtdesc[5], 0x0, 0xffffffff, 0xf3, 0x0d); // user data
     fn(gdtdesc[6], 0x0, 0x0, 0xf7, 0x0d);        // user stack
 
-    __asm__ __volatile__("lgdtl (gdt_ptr)");
+    __asm__ __volatile__("lgdtl (%0)" : : "m"(gdt_ptr));
 
     __asm__ __volatile__("movw $0x10, %ax;"
                          "movw %ax, %ds;" // points to data segment
@@ -44,4 +45,9 @@ void init_gdt() {
                                                // CPU to flush pipeline and
                                                // cache
                          "flush:;");
+}
+} // namespace GDT
+
+void init_gdt() {
+    GDT::init_gdt();
 }

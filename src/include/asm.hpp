@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
+
 /*
  * Some ASM functions utils
  */
@@ -27,5 +28,6 @@ static inline uint16_t inw(uint16_t port) {
     __asm__ __volatile__("inw %1, %0" : "=a"(ret) : "dN"(port));
     return ret;
 }
+
 
 #endif
