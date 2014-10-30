@@ -2,7 +2,7 @@ Youmix
 ======
 
 Konpaku Youmu!
-{% highlight cpp %}
+<pre><code>
                                        char*
                                      c[]={"'\
                                      x)/d)k^4\
@@ -81,4 +81,4 @@ y^R$M B1y   }%e*E!#e&I *[C B2J  *E!  #a%J-XB                                    
                                               +                  puts
                                                                  (t)
                                                                 ;}
-{% endhighlight %}
+</pre></code>
