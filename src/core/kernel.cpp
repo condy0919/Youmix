@@ -11,6 +11,7 @@
 //#include "../include/gdt.hpp"
 //#include "../include/idt.hpp"
 #include "../include/mm.hpp"
+#include "../include/logo.hpp"
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
@@ -82,6 +83,26 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     cout << *p << endl;
     delete p;
 
+    void *addr1 = Memory::heap.alloc(50);
+    cout << "alloc memory in " << addr1 << endl;
+    void *addr2 = Memory::heap.alloc(500);
+    cout << "alloc memory in " << addr2 << endl;
+    void *addr3 = Memory::heap.alloc(5000);
+    cout << "alloc memory in " << addr3 << endl;
+    void *addr4 = Memory::heap.alloc(50000);
+    cout << "alloc memory in " << addr4 << endl;
+
+    Memory::heap.dealloc(addr1);
+    cout << "free memory in " << addr1 << endl;
+    Memory::heap.dealloc(addr2);
+    cout << "free memory in " << addr2 << endl;
+    Memory::heap.dealloc(addr3);
+    cout << "free memory in " << addr3 << endl;
+    Memory::heap.dealloc(addr4);
+    cout << "free memory in " << addr4 << endl;
+
+
+
     // Failed in placement new operator
     //char buf[10];
     //char *foo = new (buf) char('a');
@@ -92,9 +113,11 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     //cout << *p << endl;
     //Memory::heap.dealloc(p);
 
+    show_logo();
+
     // It should cause page fault.
-    p = (char *)0xffffffff;
-    *p = 'a';
+    //p = (char *)0xffffffff;
+    //*p = 'a';
 
     return 0;
 }
