@@ -24,7 +24,6 @@
 #endif
 
 multiboot_info_t *glb_mboot_ptr;
-extern multiboot_info_t* glb_mboot_ptr;
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -64,7 +63,7 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     //init_timer(200);
     //__asm__ __volatile__("sti"); // Just for timer.
 
-    Memory::zone_t::memory_layout();
+    Memory::memory_layout();
 
     cout << "available pages before test: " << Memory::zone.free_pages << endl;
     for (int i = 0; i < 100; ++i) {
@@ -78,9 +77,24 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     }
     cout << "available pages after test: " << Memory::zone.free_pages << endl;
 
-    // It should cause page fault.
-    //int *p = (int *)0xffffffff;
+    // operator new test
+    char *p = new char('a');
+    cout << *p << endl;
+    delete p;
+
+    // Failed in placement new operator
+    //char buf[10];
+    //char *foo = new (buf) char('a');
+    //cout << *foo << endl;
+
+    //int *p = (int *)Memory::heap.alloc(10);
     //*p = 10;
+    //cout << *p << endl;
+    //Memory::heap.dealloc(p);
+
+    // It should cause page fault.
+    p = (char *)0xffffffff;
+    *p = 'a';
 
     return 0;
 }

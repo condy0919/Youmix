@@ -1,7 +1,7 @@
 #include "../include/mm.hpp"
 #include "../include/ostream.hpp"
 
-extern multiboot_info_t* glb_mboot_ptr;
+extern multiboot_info_t *glb_mboot_ptr;
 
 namespace Memory {
 __attribute__((aligned(PAGE_SIZE))) uint32_t page_directory[1024];
@@ -10,6 +10,7 @@ __attribute__((aligned(PAGE_SIZE))) uint32_t
     page_table_entry[PAGE_TABLE_ENTRY_COUNT][1024];
 
 zone_t zone;
+kheap heap;
 
 struct list_head *free_area_t::insert(struct list_head *p) {
     list_add(p, &free_list);
@@ -96,9 +97,15 @@ void *zone_t::alloc(int alloc_size) {
 }
 
 void zone_t::dealloc(void *_p) {
+    auto is_present = [](struct page *p) {
+        uint32_t addr = (uint32_t)p;
+        uint32_t pd_idx = PD_IDX(addr), pte_idx = PTE_IDX(addr);
+        uint32_t *pte = (uint32_t *)(page_directory[pd_idx] & PAGE_MASK);
+        return pte[pte_idx] & PAGE_PRESENT;
+    };
     auto is_buddy = [&](struct page *p, int order) {
         return uint32_t((uint8_t(*)[PAGE_SIZE])p - mem_map) < max_free_pages &&
-               p->order == order && !list_isolated(&p->list);
+               is_present(p) && p->order == order && !list_isolated(&p->list);
     };
 
     if (!_p)
@@ -123,7 +130,7 @@ void zone_t::dealloc(void *_p) {
     free_area[order].insert(&p->list);
 }
 
-void zone_t::memory_layout() {
+void memory_layout() {
     uint32_t mmap_addr = ::glb_mboot_ptr->mmap_addr;
     uint32_t mmap_len = ::glb_mboot_ptr->mmap_length;
 
@@ -147,12 +154,12 @@ int zone_t::find_order(int size) {
 }
 
 /*
- * The following 2 operations are safe only when CR4.PGE is 0
+ * The following 2 operations are safe only when CR4.PGE is not set
  */
 int zone_t::get_order(void *va) {
     uint32_t addr = (uint32_t)va;
     uint32_t pd_idx = PD_IDX(addr), pte_idx = PTE_IDX(addr);
-    uint32_t* pte = (uint32_t*)(page_directory[pd_idx] & PAGE_MASK);
+    uint32_t *pte = (uint32_t *)(page_directory[pd_idx] & PAGE_MASK);
     int ret = ((pte[pte_idx] & (0xf << 8)) >> 8);
     return ret;
 }
@@ -179,12 +186,11 @@ void init_page_dir() {
         p[i] = ((i << 12) + 0x400000) | PAGE_PRESENT | PAGE_WRITABLE;
     }
 
-    register_interrupt_handler(14, page_fault);
+    IDT::register_interrupt_handler(14, page_fault);
 }
 
-void map(uint32_t *pd, uint32_t va, uint32_t pa, uint32_t flags) {
-    extern zone_t zone;
-
+void map(uint32_t va, uint32_t pa, uint32_t flags) {
+    uint32_t *pd = page_directory;
     uint32_t pd_idx = PD_IDX(va), pte_idx = PTE_IDX(va);
     uint32_t *pte = (uint32_t *)(pd[pd_idx] & PAGE_MASK);
 
@@ -197,10 +203,13 @@ void map(uint32_t *pd, uint32_t va, uint32_t pa, uint32_t flags) {
 
     pte[pte_idx] = (pa & PAGE_MASK) | flags;
 
-    __asm__ __volatile__("invlpg (%0)" : : "a"(va));
+    // Clobber memory to avoid optimizer re-ordering access before invlpg,
+    // which may cause nasty bugs.
+    __asm__ __volatile__("invlpg (%0)" : : "r"(va) : "memory");
 }
 
-void unmap(uint32_t *pd, uint32_t va) {
+void unmap(uint32_t va) {
+    uint32_t *pd = page_directory;
     uint32_t pd_idx = PD_IDX(va), pte_idx = PTE_IDX(va);
     uint32_t *pte = (uint32_t *)(pd[pd_idx] & PAGE_MASK);
     
@@ -208,16 +217,17 @@ void unmap(uint32_t *pd, uint32_t va) {
         return;
     pte[pte_idx] = 0;
 
-    __asm__ __volatile__("invlpg (%0)" : : "a"(va));
+    __asm__ __volatile__("invlpg (%0)" : : "r"(va) : "memory");
 }
 
-uint32_t get_mapping(uint32_t *pd, uint32_t va) {
+uint32_t get_mapping(uint32_t va) {
+    uint32_t *pd = page_directory;
     uint32_t pd_idx = PD_IDX(va), pte_idx = PTE_IDX(va);
     uint32_t *pte = (uint32_t *)(pd[pd_idx] & PAGE_MASK);
 
     if (!pte)
         return 0;
-    return pte[pte_idx];
+    return pte[pte_idx] & PAGE_MASK;
 }
 
 void page_fault(IDT::Register *regs) {
@@ -229,8 +239,7 @@ void page_fault(IDT::Register *regs) {
     cout << "Error " << regs->errno << " => ";
 
     cout << "(";
-    if (regs->errno & 0x1)
-        cout << " Present";
+    cout << ((regs->errno & 0x1) ? " Present" : " NotPresent");
     cout << ((regs->errno & 0x2) ? " Write" : " Read");
     cout << ((regs->errno & 0x4) ? " User" : " Kernel");
     if (regs->errno & 0x8)
@@ -239,8 +248,81 @@ void page_fault(IDT::Register *regs) {
         cout << " Instruction";
     cout << " )" << endl;
 
-    while (true)
-        ;
+    __asm__ __volatile__("hlt");
+}
+
+cache_cache::cache_cache(int _s)
+    : block_size(_s), list(LIST_HEAD_INIT(list)) {}
+
+struct list_head *cache_cache::insert(struct list_head *p) {
+    list_add(p, &list);
+    return p;
+}
+
+struct list_head *cache_cache::remove(struct list_head *p) {
+    auto ret = p->prev;
+    list_del(p);
+    return ret;
+}
+
+void *cache_cache::front() {
+    return list.next;
+}
+
+void cache_cache::pop_front() {
+    remove(list.next);
+}
+
+void *cache_cache::alloc() {
+    if (empty())
+        refill();
+    void *ret = front();
+    pop_front();
+    return ret;
+}
+
+void cache_cache::dealloc(void *va) {
+    struct list_head *p = (struct list_head *)va;
+    insert(p);
+}
+
+void cache_cache::refill() {
+    void *page = zone.alloc(PAGE_SIZE);
+    for (uint32_t i = 0; i < PAGE_SIZE; i += block_size + sizeof(uint32_t))
+        dealloc((uint8_t *)page + i);
+}
+
+void *kheap::alloc(uint32_t size) {
+    uint32_t i = 0;
+
+    if (size == 0)
+        return nullptr;
+
+#define CACHE(x) \
+    if (size > ((x) - sizeof(uint32_t))) \
+        ++i; \
+    else \
+        goto fin;
+#include "../include/kcache_size.hpp"
+#undef CACHE
+
+fin:
+    if (i == sizeof(cache) / sizeof(cache[0])) {
+        return zone.alloc(size);
+    } else {
+        uint32_t *ret = (uint32_t *)cache[i].alloc();
+        *ret = i;
+        return ret + 1;
+    }
+}
+
+void kheap::dealloc(void *va) {
+    if (((uint32_t)va & (PAGE_SIZE - 1)) == 0) {
+        zone.dealloc(va);
+    } else {
+        uint32_t *addr = (uint32_t *)va - 1, i = *addr;
+        cache[i].dealloc(addr);
+    }
 }
 
 } // namespace Memory

@@ -1,7 +1,6 @@
 #include "../include/assert.hpp"
 
 void print_seg_status() {
-    //static int times = 0;
     uint16_t cs, ds, es, ss;
 
     __asm__ __volatile__("mov %%cs, %0" : "=m"(cs));
@@ -10,12 +9,11 @@ void print_seg_status() {
     __asm__ __volatile__("mov %%ss, %0" : "=m"(ss));
 
     using namespace io;
-    cout /*<< dec << times*/ << ": @ring" << (cs & 0x3) << endl;
-    cout /*<< dec << times*/ << ": cs = " << hex << cs << endl;
-    cout /*<< dec << times*/ << ": ds = " << hex << ds << endl;
-    cout /*<< dec << times*/ << ": es = " << hex << es << endl;
-    cout /*<< dec << times*/ << ": ss = " << hex << ss << endl;
-    //++times;
+    cout << ": @ring" << (cs & 0x3) << endl;
+    cout << ": cs = " << hex << cs << endl;
+    cout << ": ds = " << hex << ds << endl;
+    cout << ": es = " << hex << es << endl;
+    cout << ": ss = " << hex << ss << endl;
 }
 
 static void print_stack_trace() {

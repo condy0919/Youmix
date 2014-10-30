@@ -19,13 +19,6 @@ inline uint32_t PTE_IDX(uint32_t addr) { return (addr >> 12) & 0x3ff; }
 
 inline uint32_t PI_IDX(uint32_t addr) { return addr & 0xfff; }
 
-const uint32_t PAGE_SIZE = 4096;
-const uint32_t RAM_MAXSIZE = 128 * 1024 * 1024; // 128 MiB
-const uint32_t RAM_MAXPAGE = RAM_MAXSIZE / PAGE_SIZE;
-const uint32_t PAGE_MASK = 0xffffffff ^ (PAGE_SIZE - 1);
-const uint32_t PAGE_TABLE_ENTRY_COUNT = RAM_MAXPAGE / 1024;
-
-
 
 struct page {
     page() : order(0), list(LIST_HEAD_INIT(list)) {}
@@ -51,7 +44,6 @@ struct free_area_t {
 struct zone_t {
     zone_t();
 
-    void init_zone();
     void *alloc(int);
     void dealloc(void *);
 
@@ -65,20 +57,58 @@ struct zone_t {
     // Tricks to access page order
     int get_order(void *);
     void set_order(void *, uint8_t);
-
-    // show status of memory
-    static void memory_layout();
 };
 
 
+// show status of memory
+void memory_layout();
 
 extern "C" void init_page_dir();
-void map(uint32_t *, uint32_t, uint32_t, uint32_t);
-void unmap(uint32_t *, uint32_t);
-uint32_t get_mapping(uint32_t *, uint32_t);
+void map(uint32_t, uint32_t, uint32_t);
+void unmap(uint32_t);
+uint32_t get_mapping(uint32_t);
 void page_fault(IDT::Register *);
 
 extern zone_t zone;
+
+class cache_cache {
+public:
+    friend class kheap;
+
+    cache_cache(int);
+    void *alloc();
+    void dealloc(void *);
+
+    bool empty() const { return list_empty(&list); }
+
+    struct list_head *insert(struct list_head *);
+    struct list_head *remove(struct list_head *);
+    void *front();
+    void pop_front();
+
+private:
+    void refill();
+
+    const int block_size;
+    struct list_head list;
+};
+
+class kheap {
+public:
+    kheap() = default;
+
+    void *alloc(uint32_t);
+    void dealloc(void *);
+
+private:
+    cache_cache cache[9] = {
+#define CACHE(x) ((x) - sizeof(uint32_t)),
+        #include "kcache_size.hpp"
+#undef CACHE
+    };
+};
+
+extern kheap heap;
 
 } // namespace Memory
 
