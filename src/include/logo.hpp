@@ -3,6 +3,7 @@
 
 #include "ostream.hpp"
 
+namespace Logo {
 const char *logo = ""
 "                          long\n"
 "                         q;;int                    o[\n"
@@ -29,8 +30,9 @@ const char *logo = ""
 "  >=-j  ){ma1n(i,j,8);i++;j--;}}main   (         0    ,b,j);main(0,i,c);\n"
 "       /*1999*/}}else{if(a>-25)main(a-1,0,0);main(0,r[25+a],r[26+a]-1);}}\n";
 
-void show_logo() {
+void show() {
     io::cout << logo;
+}
 }
 
 #endif

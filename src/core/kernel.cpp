@@ -12,6 +12,7 @@
 //#include "../include/idt.hpp"
 #include "../include/mm.hpp"
 #include "../include/logo.hpp"
+#include "../include/log.hpp"
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
@@ -41,7 +42,7 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
 
     cout.clear();
     cout << "Hello, World" << endl;
-    cout << GREEN << "Pachouli GO!" << endl;
+    cout << Color::GREEN << "Pachouli GO!" << endl;
     //cout << left << setw(12) << 0xff << " JustDoIt" << endl;
     //cout << hex << 100 << dec << 99 << setw(4) << 0 << endl;
     //cout.printf("%d %c %s\n", -1, 'b', "Konpaku Youmu");
@@ -101,7 +102,7 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     Memory::heap.dealloc(addr4);
     cout << "free memory in " << addr4 << endl;
 
-
+    LOG("test", 1, 2, 3);
 
     // Failed in placement new operator
     //char buf[10];
@@ -113,7 +114,7 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     //cout << *p << endl;
     //Memory::heap.dealloc(p);
 
-    show_logo();
+    //Logo::show();
 
     // It should cause page fault.
     //p = (char *)0xffffffff;

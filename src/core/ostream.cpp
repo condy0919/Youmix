@@ -176,8 +176,8 @@ ostream &hex(ostream &s) {
 ostream &endl(ostream &s) {
     s.putc('\n');
     s.width(0);
-    s.bg_color(BLACK);
-    s.fg_color(WHITE);
+    s.bg_color(Color::BLACK);
+    s.fg_color(Color::WHITE);
     s.fill('\0');
     return dec(s); // not compatible with stdandard.
 }

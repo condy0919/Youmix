@@ -16,10 +16,11 @@ void print_seg_status() {
     cout << ": ss = " << hex << ss << endl;
 }
 
-static void print_stack_trace() {
+extern multiboot_info_t *glb_mboot_ptr;
+namespace {
+void print_stack_trace() {
     uint32_t *ebp, *eip;
-    extern multiboot_info_t *glb_mboot_ptr;
-    Elf_info elf(glb_mboot_ptr);
+    Elf_info elf(::glb_mboot_ptr);
 
     using namespace io;
     __asm__ __volatile__("mov %%ebp, %0" : "=r"(ebp));
@@ -30,9 +31,11 @@ static void print_stack_trace() {
     }
 }
 
+}
+
 void kernel_panic() {
     using namespace io;
-    cout << RED << "*** kernel panic ***" << endl;
+    cout << Color::RED << "*** kernel panic ***" << endl;
     print_stack_trace();
-    cout << RED << "***" << endl;
+    cout << Color::RED << "***" << endl;
 }

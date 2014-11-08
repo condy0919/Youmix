@@ -31,12 +31,12 @@ struct SegmentDescriptor {
     uint8_t other : 4;
 
     uint8_t base24_31;
-} __attribute((packed));
+} __attribute__((packed));
 
 struct GDTPointer {
     uint16_t limit;
     uint32_t base;
-} __attribute((packed));
+} __attribute__((packed));
 
 void init_gdt();
 } // namespace GDT

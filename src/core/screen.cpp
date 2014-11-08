@@ -1,6 +1,6 @@
 #include "../include/screen.hpp"
 
-screen::screen() : row(0), col(0), color((io::BLACK << 4) | io::WHITE) {}
+screen::screen() : row(0), col(0), color((static_cast<int>(io::Color::BLACK) << 4) | static_cast<int>(io::Color::WHITE)) {}
 
 void screen::clear() {
     std::fill_n(vbuf, MAXROW * MAXCOL, BLANK);
@@ -57,12 +57,12 @@ void screen::gotoxy(uint8_t x, uint8_t y) {
 io::Color screen::bg_color() const { return io::Color(color >> 4); }
 
 io::Color screen::bg_color(io::Color c) {
-    return io::Color(color = ((color & 0x00ff) | (c << 4)));
+    return io::Color(color = ((color & 0x00ff) | (static_cast<int>(c) << 4)));
 }
 
 io::Color screen::fg_color() const { return io::Color(color & 0xf); }
 
 io::Color screen::fg_color(io::Color c) {
-    return io::Color(color = ((color & 0xff00) | c));
+    return io::Color(color = ((color & 0xff00) | static_cast<int>(c)));
 }
 

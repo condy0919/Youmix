@@ -11,7 +11,7 @@
 #include "../libs/string.h"
 
 namespace io {
-enum Color {
+enum class Color {
     BLACK = 0,
     BLUE = 1,
     GREEN = 2,
@@ -48,7 +48,9 @@ public:
 private:
     const uint8_t MAXROW = 25, MAXCOL = 80;
     uint16_t *const vbuf = (uint16_t * const)(0xB8000 /*+ KERNEL_VIRTUAL_BASE*/);
-    const uint16_t BLANK = (((io::BLACK << 4) | io::WHITE) << 8) | ' ';
+    const uint16_t BLANK =
+        (((static_cast<int>(io::Color::BLACK) << 4) | static_cast<int>(io::Color::WHITE)) << 8) |
+        ' ';
     uint8_t row, col;
     uint16_t color;
 
