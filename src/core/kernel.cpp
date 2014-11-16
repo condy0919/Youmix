@@ -13,6 +13,8 @@
 #include "../include/mm.hpp"
 #include "../include/logo.hpp"
 #include "../include/log.hpp"
+#include "../libs/list"
+#include "../libs/algorithm"
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
@@ -119,6 +121,20 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     // It should cause page fault.
     //p = (char *)0xffffffff;
     //*p = 'a';
+
+    std::list<int> lst;
+    lst.push_back(1);
+    lst.push_back(2);
+    lst.push_back(3);
+    lst.push_back(4);
+    lst.push_back(5);
+
+    std::for_each(lst.begin(), lst.end(), [](int x) { cout << x << " "; });
+    cout << endl;
+    std::for_each(lst.rbegin(), lst.rend(), [](int x) { cout << x << " "; });
+    cout << endl;
+    auto iter = lst.rend().base();
+    cout << *iter << endl;
 
     return 0;
 }

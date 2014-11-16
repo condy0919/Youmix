@@ -6,7 +6,6 @@
 
 #include "utility"
 
-
 namespace std {
 template <typename InputIteraotr, typename Size, typename OutputIterator>
 OutputIterator copy_n(InputIteraotr first, Size n, OutputIterator result) {
@@ -68,6 +67,12 @@ template <typename T> const T &min(const T &a, const T &b) {
 
 template <typename T> const T &max(const T &a, const T &b) {
     return a < b ? b : a;
+}
+
+template<typename InputIteraotr, typename Fn>
+void for_each(InputIteraotr first, InputIteraotr end, Fn fn) {
+    for (InputIteraotr iter = first; iter != end; ++iter)
+        fn(*iter);
 }
 }
 

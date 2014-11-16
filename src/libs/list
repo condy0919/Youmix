@@ -1,0 +1,184 @@
+#ifndef _YOUMIX_LIST_H_
+#define _YOUMIX_LIST_H_
+
+#include <stdint.h>
+#include <stddef.h>
+
+#include "utility"
+
+namespace std {
+
+template<typename T>
+class list {
+    class node {
+        friend class list;
+    public:
+        node() {}
+        node(T&& val) : val(std::move(val)), prev(nullptr), next(nullptr) {}
+        node(const T& val) : val(val), prev(nullptr), next(nullptr) {}
+
+    private:
+        node(node* p, node* n) : prev(p), next(n) {}
+        T val;
+        node *prev, *next;
+    };
+
+public:
+    typedef T value_type;
+    typedef T& reference;
+    typedef const value_type& const_reference;
+
+    class iterator {
+    public:
+        iterator(node* p) : p(p) {}
+
+        bool operator==(const iterator& rhs) const { return p == rhs.p; }
+        bool operator!=(const iterator& rhs) const { return p != rhs.p; }
+        T operator*() { return p->val; }
+
+        iterator& operator++() {
+            p = p->next;
+            return *this;
+        }
+
+        iterator& operator--() {
+            p = p->prev;
+            return *this;
+        }
+
+        iterator operator++(int) {
+            iterator ret(*this);
+            operator++();
+            return ret;
+        }
+
+        iterator operator--(int) {
+            iterator ret(*this);
+            operator--();
+            return ret;
+        }
+
+    private:
+        node* p;
+    };
+
+    class reverse_iterator : public iterator {
+    public:
+        using iterator::iterator;
+
+        iterator& operator++() { return iterator::operator--(); }
+        iterator& operator--() { return iterator::operator++(); }
+        iterator operator++(int) { return iterator::operator--(0); }
+        iterator operator--(int) { return iterator::operator++(0); }
+        iterator base() const {
+            reverse_iterator tmp(*this);
+            --tmp;
+            return tmp;
+        }
+    };
+
+
+    list() : head(&head, &head), sz(0) {}
+    bool empty() const { return sz == 0; }
+    uint32_t size() const { return sz; }
+
+    reference front();
+    const_reference front() const;
+    reference back();
+    const_reference back() const;
+    void pop_front();
+    void pop_back();
+    void push_front(const T&);
+    void push_front(T&&);
+    void push_back(const T&);
+    void push_back(T&&);
+
+    iterator begin() { return head.next; }
+    iterator begin() const { return head.next; }
+    iterator end() { return &head; }
+    iterator end() const { return &head; }
+    reverse_iterator rbegin() { return head.prev; }
+    reverse_iterator rbegin() const { return head.prev; }
+    reverse_iterator rend() { return &head; }
+    reverse_iterator rend() const { return &head; }
+
+private:
+    void __remove(node* p, node* n) {
+        p->next = n;
+        n->prev = p;
+    }
+
+    void __insert(node* cur, node* p, node* n) {
+        n->prev = cur;
+        p->next = cur;
+        cur->next = n;
+        cur->prev = p;
+    }
+
+    node head;
+    uint32_t sz;
+};
+
+template<typename T>
+typename list<T>::reference list<T>::front() { return head.next->data; }
+
+template<typename T>
+typename list<T>::const_reference list<T>::front() const {
+    return head.next->data;
+}
+
+template<typename T>
+typename list<T>::reference list<T>::back() { return head.prev->data; }
+
+template<typename T>
+typename list<T>::const_reference list<T>::back() const {
+    return head.prev->data;
+}
+
+template<typename T> 
+void list<T>::pop_front() {
+    node* fst = head.next;
+    __remove(fst->prev, fst->next);
+    delete fst;
+    --sz;
+}
+
+template<typename T>
+void list<T>::pop_back() {
+    node* last = head.prev;
+    __remove(last->prev, last->next);
+    delete last;
+    --sz;
+}
+
+template<typename T>
+void list<T>::push_back(const T& item) {
+    node* newitem = new node(item);
+    __insert(newitem, head.prev, &head);
+    ++sz;
+}
+
+template<typename T>
+void list<T>::push_back(T&& item) {
+    node* newitem = new node(std::move(item));
+    __insert(newitem, head.prev, &head);
+    ++sz;
+}
+
+template<typename T>
+void list<T>::push_front(const T& item) {
+    node* newitem = new node(item);
+    __insert(newitem, &head, head.next);
+    ++sz;
+}
+
+template<typename T>
+void list<T>::push_front(T&& item) {
+    node* newitem = new node(std::move(item));
+    __insert(newitem, &head, head.next);
+    ++sz;
+}
+
+} // namespace std
+
+#endif
