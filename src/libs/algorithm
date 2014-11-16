@@ -74,6 +74,130 @@ void for_each(InputIteraotr first, InputIteraotr end, Fn fn) {
     for (InputIteraotr iter = first; iter != end; ++iter)
         fn(*iter);
 }
+
+template<typename InputIteraotr, typename T>
+InputIteraotr find(InputIteraotr first, InputIteraotr last, const T& val) {
+    while (first != last) {
+        if (*first == val)
+            return first;
+        ++first;
+    }
+    return last;
+}
+
+template<typename InputIteraotr, typename Pred>
+InputIteraotr find_if(InputIteraotr first, InputIteraotr last, Pred fn) {
+    while (first != last) {
+        if (fn(*first))
+            return first;
+        ++first;
+    }
+    return last;
+}
+
+template<typename InputIteraotr, typename T>
+size_t count(InputIteraotr first, InputIteraotr last, const T& val) {
+    size_t ret = 0;
+    while (first != last) {
+        if (*first == val)
+            ++ret;
+        ++first;
+    }
+    return ret;
+}
+
+template<typename InputIteraotr, typename Pred>
+size_t count_if(InputIteraotr first, InputIteraotr last, Pred fn) {
+    size_t ret = 0;
+    while (first != last) {
+        if (fn(*first))
+            ++ret;
+        ++first;
+    }
+    return ret;
+}
+
+template<typename InputIteraotr1, typename InputIteraotr2>
+bool equal(InputIteraotr1 first1, InputIteraotr1 last1, InputIteraotr2 first2) {
+    while (first1 != last1) {
+        if (!(*first1 == *first2))
+            return false;
+        ++first1;
+        ++first2;
+    }
+    return true;
+}
+
+template<typename InputIteraotr1, typename InputIteraotr2, typename Pred>
+bool equal(InputIteraotr1 first1, InputIteraotr1 last1, InputIteraotr2 first2, Pred fn) {
+    while (first1 != last1) {
+        if (!fn(*first1, *first2))
+            return false;
+        ++first1;
+        ++first2;
+    }
+    return true;
+}
+
+template<typename InputIteraotr, typename OutputIterator, typename Operation>
+OutputIterator transform(InputIteraotr first1, InputIteraotr last1, OutputIterator result, Operation op) {
+    while (first1 != last1) {
+        *result = op(*first1);
+        ++result;
+        ++first1;
+    }
+    return result;
+}
+
+template<typename ForwardIter>
+ForwardIter unique(ForwardIter first, ForwardIter last) {
+    if (first == last)
+        return last;
+    ForwardIter result = first;
+    while (++first != last) {
+        if (!(*result == *first))
+            *++result = *first;
+    }
+    return ++result;
+}
+
+template<typename ForwardIter, typename BinaryPredicate>
+ForwardIter unique(ForwardIter first, ForwardIter last, BinaryPredicate fn) {
+    if (first == last)
+        return last;
+    ForwardIter result = first;
+    while (++first != last) {
+        if (!fn(*result, *first))
+            *++result = *first;
+    }
+    return ++result;
+}
+
+template<typename ForwardIter, typename Pred>
+ForwardIter partition(ForwardIter first, ForwardIter last, Pred fn) {
+    if (first == last)
+        return last;
+    ForwardIter next = first;
+    for (ForwardIter i = first + 1; i != last; ++i) {
+        if (fn(*i))
+            std::swap(*i, *++next);
+    }
+    std::swap(*next, *first);
+    return ++next;
+}
+
+template<typename RandomAssessIterator>
+void sort(RandomAssessIterator first, RandomAssessIterator last) {
+    if (first == last || first == last - 1)
+        return;
+    for (RandomAssessIterator fst = first; fst != last && fst != last - 1; ) {
+        auto tmp = *fst;
+        RandomAssessIterator pivot =
+            partition(fst, last, [=](decltype(*fst) x) { return x <= tmp; });
+        sort(first, pivot);
+        fst = pivot;
+    }
+}
 }
 
 #endif

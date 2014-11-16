@@ -15,6 +15,7 @@
 #include "../include/log.hpp"
 #include "../libs/list"
 #include "../libs/algorithm"
+#include "../libs/iterator"
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
@@ -122,19 +123,24 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     //p = (char *)0xffffffff;
     //*p = 'a';
 
-    std::list<int> lst;
-    lst.push_back(1);
-    lst.push_back(2);
-    lst.push_back(3);
-    lst.push_back(4);
-    lst.push_back(5);
+    //std::list<int> lst;
+    //lst.push_back(1);
+    //lst.push_back(2);
+    //lst.push_back(3);
+    //lst.push_back(4);
+    //lst.push_back(5);
 
-    std::for_each(lst.begin(), lst.end(), [](int x) { cout << x << " "; });
+    //std::for_each(lst.rbegin(), lst.rend(), [](int x) { cout << x << " "; });
+    //cout << endl;
+    //auto iter = lst.rend().base();
+    //cout << *iter << endl;
+
+    //iter = std::find(lst.begin(), lst.end(), 2);
+    //cout << *iter << endl;
+    int a[] = {3, 4, 5, 1, 2};
+    std::sort(std::begin(a), std::end(a));
+    std::for_each(std::begin(a), std::end(a), [](int x) { cout << x << " "; });
     cout << endl;
-    std::for_each(lst.rbegin(), lst.rend(), [](int x) { cout << x << " "; });
-    cout << endl;
-    auto iter = lst.rend().base();
-    cout << *iter << endl;
 
     return 0;
 }
