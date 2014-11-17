@@ -10,6 +10,24 @@ void iota(ForwardIterator first, ForwardIterator last, T val) {
         ++val;
     }
 }
+
+template<typename InputIterator, typename T>
+T accumulate(InputIterator first, InputIterator last, T init) {
+    while (first != last) {
+        init = init + *first;
+        ++first;
+    }
+    return init;
+}
+
+template<typename InputIterator, typename T, typename BinaryPred>
+T accumulate(InputIterator first, InputIterator last, T init, BinaryPred bop) {
+    while (first != last) {
+        init = bop(init, *first);
+        ++first;
+    }
+    return init;
+}
 }
 
 #endif

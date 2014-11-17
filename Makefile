@@ -6,7 +6,7 @@ CC = i686-elf-gcc
 CXX = i686-elf-g++
 AS = i686-elf-as
 
-CXXFLAGS = -c -Wall -Wextra -ffreestanding -fno-exceptions -fno-rtti -ggdb -gstabs+ -std=c++11
+CXXFLAGS = -c -Wall -Wextra -ffreestanding -fno-exceptions -fno-rtti -ggdb -gstabs+ -std=c++1y
 ASFLAGS = -g --gstabs
 
 CPP_SRCS = $(shell find . -iname "*.cpp")

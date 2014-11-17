@@ -46,7 +46,7 @@ public:
     io::Color fg_color(io::Color);
 
 private:
-    const uint8_t MAXROW = 25, MAXCOL = 80;
+    static const uint8_t MAXROW = 25, MAXCOL = 80;
     uint16_t *const vbuf = (uint16_t * const)(0xB8000 /*+ KERNEL_VIRTUAL_BASE*/);
     const uint16_t BLANK =
         (((static_cast<int>(io::Color::BLACK) << 4) | static_cast<int>(io::Color::WHITE)) << 8) |
