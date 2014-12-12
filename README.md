@@ -84,3 +84,7 @@ y^R$M B1y   }%e*E!#e&I *[C B2J  *E!  #a%J-XB                                    
 </pre></code>
 [Youmu](http://uguu.org/src_youmu_c.html)
 
+看我脑洞大开～
+
+Note:
+    关于Makefile里的-Wno-invalid-offsetof编译选项，由于使用对象是standard-layout，对其使用offsetof是安全的。见ISO IEC 14882:2011 18.2.4。后来发现这个方法不好，于是手工push了当前对象的this，当调用thread_exit时取得栈底部的值。

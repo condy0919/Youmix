@@ -208,12 +208,11 @@ __asm__ __volatile__("movw %bx, %ss");
 __asm__ __volatile__("popa");
 __asm__ __volatile__("addl $0x8, %esp");
 __asm__ __volatile__("iret");
-__asm__ __volatile__("ret");
 
 
 
 
-// Definition of isq0~15
+// Definition of irq0~15
 
 
 void irq_handler(Register *reg) {
@@ -277,7 +276,6 @@ __asm__ __volatile__("movw %ax, %ss");
 __asm__ __volatile__("popa");
 __asm__ __volatile__("addl $0x8, %esp");
 __asm__ __volatile__("iret");
-__asm__ __volatile__("ret");
 }
 
 void init_idt() {

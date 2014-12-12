@@ -93,6 +93,8 @@ public:
     void push_back(const T&);
     void push_back(T&&);
 
+    void remove(const value_type&);
+
     iterator begin() { return head.next; }
     iterator begin() const { return head.next; }
     iterator end() { return &head; }
@@ -120,19 +122,19 @@ private:
 };
 
 template<typename T>
-typename list<T>::reference list<T>::front() { return head.next->data; }
+typename list<T>::reference list<T>::front() { return head.next->val; }
 
 template<typename T>
 typename list<T>::const_reference list<T>::front() const {
-    return head.next->data;
+    return head.next->val;
 }
 
 template<typename T>
-typename list<T>::reference list<T>::back() { return head.prev->data; }
+typename list<T>::reference list<T>::back() { return head.prev->val; }
 
 template<typename T>
 typename list<T>::const_reference list<T>::back() const {
-    return head.prev->data;
+    return head.prev->val;
 }
 
 template<typename T> 
@@ -177,6 +179,18 @@ void list<T>::push_front(T&& item) {
     node* newitem = new node(std::move(item));
     __insert(newitem, &head, head.next);
     ++sz;
+}
+
+template<typename T>
+void list<T>::remove(const T& val) {
+    for (node *p = head.next; p != &head; p = p->next) {
+        if (p->val == val) {
+            node *t = p->prev;
+            __remove(p->prev, p->next);
+            --sz;
+            p = t;
+        }
+    }
 }
 
 } // namespace std

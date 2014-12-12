@@ -27,6 +27,7 @@ OBJS = $(filter-out $(CRTI_OBJ) $(CRTN_OBJ), $(AS_OBJS)) $(CPP_OBJS)
 OBJ_LINK_LIST = $(CRTI_OBJ) $(CRTBEGIN_OBJ) $(OBJS) $(CRTEND_OBJ) $(CRTN_OBJ)
 INTERNAL_OBJS = $(CRTI_OBJ) $(OBJS) $(CRTN_OBJ)
 
+all: LINK update_image
 
 LINK: $(OBJ_LINK_LIST)
 	@echo -e "\033[31mLINK\033[0m kernel file"
@@ -49,15 +50,8 @@ update_image:
 	sudo umount /mnt
 
 qemu:
-	$(QEMU) -kernel $(KERNEL)
-
-qemu-floppy:
 	$(QEMU) -fda floppy.img -boot a
 
 debug:
-	$(QEMU) -S -s -kernel $(KERNEL) &
-	cgdb -x tools/gdbinit 
-
-debug-floppy:
 	$(QEMU) -S -s -fda floppy.img -boot a &
 	cgdb -x tools/gdbinit

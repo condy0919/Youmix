@@ -1,6 +1,14 @@
-#ifndef _YOUMIX_ASSERT_H_
-#define _YOUMIX_ASSERT_H_
+/*
+ * ISO C99 Standard: 7.2 Diagnostics   <assert.h>
+ */
+#ifdef _YOUMIX_ASSERT_H_
 
+#undef _YOUMIX_ASSERT_H_
+#undef assert
+
+#endif // assert.h
+
+#define _YOUMIX_ASSERT_H_
 #include "ostream.hpp"
 #include "elf.hpp"
 
@@ -15,11 +23,8 @@
         } \
     } while (0)
 #else
-#define assert(x) (x)
+#define assert(x) (void)0
 #endif
-
 
 void kernel_panic();
 void print_seg_status();
-
-#endif

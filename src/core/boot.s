@@ -71,7 +71,7 @@ StartInHighHalf:
 
     call init_gdt
     call init_idt
-
+    call init_sched
 
     #popl %eax
     #pushl %ebx # ptr to multiboot_info_t

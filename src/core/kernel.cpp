@@ -8,14 +8,15 @@
 #include "../include/ostream.hpp"
 #include "../include/assert.hpp"
 #include "../include/timer.hpp"
-//#include "../include/gdt.hpp"
-//#include "../include/idt.hpp"
+#include "../include/gdt.hpp"
+#include "../include/idt.hpp"
 #include "../include/mm.hpp"
 #include "../include/logo.hpp"
 #include "../include/log.hpp"
 #include "../libs/list"
 #include "../libs/algorithm"
 #include "../libs/iterator"
+#include "../include/thread.hpp"
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
@@ -29,6 +30,7 @@
 #endif
 
 multiboot_info_t *glb_mboot_ptr;
+bool flag = false;
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -61,12 +63,6 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     //cout << hex << mb->mem_upper << dec << endl;
 
     assert(1);
-
-    //__asm__ __volatile__("int $0x3");
-    //__asm__ __volatile__("int $0x4");
-
-    //init_timer(200);
-    //__asm__ __volatile__("sti"); // Just for timer.
 
     Memory::memory_layout();
 
@@ -150,13 +146,38 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
             cout << *i << " ";
         cout << endl;
 
-        int b[] = {1, 2, 3, 4};
+        int b[] = {1, 2, 3};
         do {
             for (const auto& i : b)
                 cout << i << " ";
             cout << endl;
         } while (std::next_permutation(std::begin(b), std::end(b)));
     }
+
+    // Start to schedule
+    init_timer(200);
+    __asm__ __volatile__("sti");
+
+    auto t = new K::thread<void(char)>([](char c) {
+                                           while (true) {
+                                               if (flag) {
+                                                   cout << io::Color::RED << c;
+                                                   flag = !flag;
+                                               }
+                                           }
+                                       },
+                                       'A');
+    while (true) {
+        if (!flag) {
+            cout << io::Color::GREEN << 'B';
+            flag = !flag;
+        }
+    }
+    cout << io::Color::WHITE << t->joinable() << endl;
+    t->join();
+    cout << io::Color::WHITE << "join completes" << endl;
+    while (true)
+        __asm__ __volatile__("pause" : : : "memory");
 
     return 0;
 }

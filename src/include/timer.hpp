@@ -6,6 +6,6 @@
 
 #include "idt.hpp"
 
-void init_timer(uint32_t = 200);
+void init_timer(uint32_t);
 
 #endif
