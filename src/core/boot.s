@@ -73,9 +73,6 @@ StartInHighHalf:
     call init_idt
     call init_sched
 
-    #popl %eax
-    #pushl %ebx # ptr to multiboot_info_t
-    #pushl %eax # magic
     call kernel_main
 
     call _fini # call global destructors

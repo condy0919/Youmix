@@ -35,14 +35,7 @@ bool flag = false;
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
-int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
-    //(void)magic;
-    //(void)mb;
-    //glb_mboot_ptr = mb;
-
-    //init_gdt();
-    //init_idt();
-
+int kernel_main() {
     using namespace io;
 
     cout.clear();
@@ -102,11 +95,6 @@ int kernel_main(/*uint32_t magic, multiboot_info_t *mb*/) {
     cout << "free memory in " << addr4 << endl;
 
     LOG("test", 1, 2, 3);
-
-    // Failed in placement new operator
-    //char buf[10];
-    //char *foo = new (buf) char('a');
-    //cout << *foo << endl;
 
     //int *p = (int *)Memory::heap.alloc(10);
     //*p = 10;
