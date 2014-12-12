@@ -1,0 +1,42 @@
+#ifndef _YOUMIX_INITIALIZER_LIST_HPP_
+#define _YOUMIX_INITIALIZER_LIST_HPP_
+
+#include <stddef.h>
+
+namespace std {
+template<typename T>
+class initializer_list {
+public:
+    typedef T value_type;
+    typedef const T& reference;
+    typedef const T& const_reference;
+    typedef size_t size_type;
+    typedef const T* iterator;
+    typedef const T* const_iterator;
+
+private:
+    iterator array;
+    size_type len;
+
+    constexpr initializer_list(const_iterator a, size_type l)
+        : array(a), len(l) {}
+
+public:
+    constexpr initializer_list() : array(0), len(0) {}
+    constexpr size_type size() { return len; }
+    constexpr const_iterator begin() { return array; }
+    constexpr const_iterator end() { return array + size(); }
+};
+
+template<typename T>
+constexpr const T* begin(initializer_list<T> ils) {
+    return ils.begin();
+}
+
+template<typename T>
+constexpr const T* end(initializer_list<T> ils) {
+    return ils.end();
+}
+}
+
+#endif

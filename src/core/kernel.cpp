@@ -13,10 +13,14 @@
 #include "../include/mm.hpp"
 #include "../include/logo.hpp"
 #include "../include/log.hpp"
+#include "../include/thread.hpp"
+
+#include "../libs/utility"
 #include "../libs/list"
 #include "../libs/algorithm"
 #include "../libs/iterator"
-#include "../include/thread.hpp"
+#include "../libs/initializer_list"
+
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
  */
@@ -31,6 +35,7 @@
 
 multiboot_info_t *glb_mboot_ptr;
 bool flag = false;
+
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -108,12 +113,7 @@ int kernel_main() {
     //*p = 'a';
 
     { // tests for container and algorithm
-        std::list<int> lst;
-        lst.push_back(1);
-        lst.push_back(2);
-        lst.push_back(3);
-        lst.push_back(4);
-        lst.push_back(5);
+        std::list<int> lst({1, 2, 3, 4, 5});
 
         std::for_each(lst.rbegin(), lst.rend(), [](int x) { cout << x << " "; });
         cout << endl;

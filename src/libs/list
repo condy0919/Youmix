@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "utility"
+#include "initializer_list"
 
 namespace std {
 
@@ -13,7 +14,7 @@ class list {
     class node {
         friend class list;
     public:
-        node() {}
+        node() : prev(nullptr), next(nullptr) {}
         node(T&& val) : val(std::move(val)), prev(nullptr), next(nullptr) {}
         node(const T& val) : val(val), prev(nullptr), next(nullptr) {}
 
@@ -27,6 +28,7 @@ public:
     typedef T value_type;
     typedef T& reference;
     typedef const value_type& const_reference;
+    typedef size_t size_type;
 
     class iterator {
     public:
@@ -79,6 +81,14 @@ public:
 
 
     list() : head(&head, &head), sz(0) {}
+    explicit list(size_type);
+    list(size_type, const value_type&);
+    template<typename InputIterator> list(InputIterator, InputIterator);
+    list(const list&);
+    list(list&&);
+    list(std::initializer_list<value_type>);
+    ~list();
+
     bool empty() const { return sz == 0; }
     uint32_t size() const { return sz; }
 
@@ -93,6 +103,7 @@ public:
     void push_back(const T&);
     void push_back(T&&);
 
+    void clear();
     void remove(const value_type&);
 
     iterator begin() { return head.next; }
@@ -120,6 +131,52 @@ private:
     node head;
     uint32_t sz;
 };
+
+template<typename T>
+list<T>::list(typename list<T>::size_type n) : list() {
+    for (typename list<T>::size_type i = 0; i < n; ++i)
+        push_back(T());
+}
+
+template<typename T>
+list<T>::list(typename list<T>::size_type n, const typename list<T>::value_type& val) : list() {
+    for (typename list<T>::size_type i = 0; i < n; ++i)
+        push_back(val);
+}
+
+template<typename T>
+template<typename InputIterator>
+list<T>::list(InputIterator first, InputIterator last) : list() {
+    while (first != last) {
+        push_back(*first);
+        ++first;
+    }
+}
+
+template<typename T>
+list<T>::list(const list<T>& x) : list() {
+    for (const auto &i : x)
+        push_back(i);
+}
+
+template<typename T>
+list<T>::list(list&& x) {
+    head = x.head;
+    sz = x.sz;
+    x.sz = 0;
+    x.head = node();
+}
+
+template<typename T>
+list<T>::list(std::initializer_list<typename list<T>::value_type> il) : list() {
+    for (const auto &i : il)
+        push_back(i);
+}
+
+template<typename T>
+list<T>::~list() {
+    clear();
+}
 
 template<typename T>
 typename list<T>::reference list<T>::front() { return head.next->val; }
@@ -191,6 +248,12 @@ void list<T>::remove(const T& val) {
             p = t;
         }
     }
+}
+
+template<typename T>
+void list<T>::clear() {
+    while (!empty())
+        pop_back();
 }
 
 } // namespace std
