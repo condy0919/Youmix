@@ -102,9 +102,22 @@ public:
     void push_front(T&&);
     void push_back(const T&);
     void push_back(T&&);
-
-    void clear();
     void remove(const value_type&);
+    void clear();
+
+    template<typename InputIterator> void assign(InputIterator, InputIterator);
+    void assign(size_type, const value_type&);
+    void assign(std::initializer_list<value_type>);
+
+    iterator insert(iterator, const value_type&);
+    iterator insert(iterator, size_type, const value_type&);
+    template<typename InputIterator>
+    iterator insert(iterator, InputIterator, InputIterator);
+    iterator insert(iterator, value_type&&);
+    iterator insert(iterator, std::initializer_list<value_type>);
+
+    iterator erase(iterator);
+    iterator erase(iterator, iterator);
 
     iterator begin() { return head.next; }
     iterator begin() const { return head.next; }
@@ -119,6 +132,14 @@ private:
     void __remove(node* p, node* n) {
         p->next = n;
         n->prev = p;
+    }
+
+    node* __remove_node(node *cur) {
+        node *ret = cur->prev;
+        __remove(cur->prev, cur->next);
+        delete cur;
+        --sz;
+        return ret;
     }
 
     void __insert(node* cur, node* p, node* n) {
@@ -147,10 +168,7 @@ list<T>::list(typename list<T>::size_type n, const typename list<T>::value_type&
 template<typename T>
 template<typename InputIterator>
 list<T>::list(InputIterator first, InputIterator last) : list() {
-    while (first != last) {
-        push_back(*first);
-        ++first;
-    }
+    assign(first, last);
 }
 
 template<typename T>
@@ -169,13 +187,101 @@ list<T>::list(list&& x) {
 
 template<typename T>
 list<T>::list(std::initializer_list<typename list<T>::value_type> il) : list() {
-    for (const auto &i : il)
-        push_back(i);
+    assign(il);
 }
 
 template<typename T>
 list<T>::~list() {
     clear();
+}
+
+template<typename T>
+template<typename InputIterator>
+void list<T>::assign(InputIterator first, InputIterator last) {
+    clear();
+    while (first != last) {
+        push_back(*first);
+        ++first;
+    }
+}
+
+template<typename T>
+void list<T>::assign(typename list<T>::size_type n, const typename list<T>::value_type& val) {
+    clear();
+    for (typename list<T>::size_type i = 0; i < n; ++i)
+        push_back(val);
+}
+
+template<typename T>
+void list<T>::assign(std::initializer_list<typename list<T>::value_type> il) {
+    clear();
+    for (const auto &i : il)
+        push_back(i);
+}
+
+template<typename T>
+typename list<T>::iterator
+list<T>::insert(typename list<T>::iterator pos,
+                const typename list<T>::value_type &val) {
+    node *p = pos.p;
+    node *newitem = new node(val);
+    __insert(newitem, p, p->next);
+    return iterator(newitem);
+}
+
+
+template<typename T>
+typename list<T>::iterator
+list<T>::insert(typename list<T>::iterator pos, typename list<T>::size_type n,
+                const typename list<T>::value_type &val) {
+    for (typename list<T>::size_type i = 0; i < n; ++i)
+        insert(pos, val);
+    return pos;
+}
+
+template<typename T>
+template<typename InputIterator>
+typename list<T>::iterator list<T>::insert(typename list<T>::iterator pos,
+                                           InputIterator first,
+                                           InputIterator last) {
+    while (first != last) {
+        insert(pos, *first);
+        ++first;
+    }
+    return pos;
+}
+
+template <typename T>
+typename list<T>::iterator list<T>::insert(typename list<T>::iterator pos,
+                                           typename list<T>::value_type &&val) {
+    node *p = pos.p;
+    node *newitem = new node(std::move(val));
+    __insert(newitem, p, p->next);
+    return iterator(newitem);
+}
+
+template<typename T>
+typename list<T>::iterator
+list<T>::insert(typename list<T>::iterator pos,
+                std::initializer_list<typename list<T>::value_type> il) {
+    for (const auto& i : il)
+        insert(pos, i);
+    return pos;
+}
+
+template<typename T>
+typename list<T>::iterator list<T>::erase(typename list<T>::iterator pos) {
+    return __remove_node(pos.p);
+}
+
+template<typename T>
+typename list<T>::iterator list<T>::erase(typename list<T>::iterator first,
+                                          typename list<T>::iterator last) {
+    while (first != last) {
+        erase(first);
+        ++first;
+    }
+    return last.p->prev;
 }
 
 template<typename T>
@@ -196,18 +302,12 @@ typename list<T>::const_reference list<T>::back() const {
 
 template<typename T> 
 void list<T>::pop_front() {
-    node* fst = head.next;
-    __remove(fst->prev, fst->next);
-    delete fst;
-    --sz;
+    __remove_node(head.next);
 }
 
 template<typename T>
 void list<T>::pop_back() {
-    node* last = head.prev;
-    __remove(last->prev, last->next);
-    delete last;
-    --sz;
+    __remove_node(head.prev);
 }
 
 template<typename T>
