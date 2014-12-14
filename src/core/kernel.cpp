@@ -146,15 +146,14 @@ int kernel_main() {
     init_timer(200);
     __asm__ __volatile__("sti");
 
-    auto t = new K::thread<void(char)>([](char c) {
-                                           while (true) {
-                                               if (flag) {
-                                                   cout << io::Color::RED << c;
-                                                   flag = !flag;
-                                               }
-                                           }
-                                       },
-                                       'A');
+    auto t = new K::thread<void(void)>([]() {
+        while (true) {
+            if (flag) {
+                cout << io::Color::RED << 'A';
+                flag = !flag;
+            }
+        }
+    });
     while (true) {
         if (!flag) {
             cout << io::Color::GREEN << 'B';
