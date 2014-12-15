@@ -122,6 +122,7 @@ ostream &ostream::operator<<(const char *s) {
         while (n-- > 0)
             putc(ch);
     };
+
     if (width() > outlen) {
         if (flags() & fmt_right) {
             prcn(_fillch ? _fillch : ' ', width() - outlen);

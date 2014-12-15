@@ -14,6 +14,7 @@
 #include "../include/logo.hpp"
 #include "../include/log.hpp"
 #include "../include/thread.hpp"
+#include "../include/mutex.hpp"
 
 #include "../libs/utility"
 #include "../libs/list"
@@ -35,7 +36,7 @@
 
 multiboot_info_t *glb_mboot_ptr;
 bool flag = false;
-
+std::mutex mtx;
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -147,19 +148,14 @@ int kernel_main() {
     __asm__ __volatile__("sti");
 
     auto t = new K::thread<void(void)>([]() {
-        while (true) {
-            if (flag) {
-                cout << io::Color::RED << 'A';
-                flag = !flag;
-            }
-        }
+        mtx.lock();
+        while (true)
+            cout << 'A';
+        mtx.unlock();
     });
-    while (true) {
-        if (!flag) {
-            cout << io::Color::GREEN << 'B';
-            flag = !flag;
-        }
-    }
+    mtx.lock();
+    cout << "You can't see it\n";
+    mtx.unlock();
     cout << io::Color::WHITE << t->joinable() << endl;
     t->join();
     cout << io::Color::WHITE << "join completes" << endl;

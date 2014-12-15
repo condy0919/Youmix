@@ -117,7 +117,11 @@ void isr_handler(Register *reg) {
     if (interrupt_handlers[reg->int_no])
         interrupt_handlers[reg->int_no](reg);
     else
+#ifndef NDEBUG
+        __asm__ __volatile__("hlt");
+#else
         io::cout << "Unhandled interrupt " << reg->int_no << io::endl;
+#endif
 }
 
 void register_interrupt_handler(uint8_t id, decltype(isr_handler) *h) {
