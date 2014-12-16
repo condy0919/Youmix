@@ -144,6 +144,9 @@ int kernel_main() {
         } while (std::next_permutation(std::begin(b), std::end(b)));
     }
 
+    //int buffer;
+    //new(&buffer) int(0xffffffff);
+    //cout << buffer << endl;
     //std::shared_ptr<int> sp(new int[123], [](int* p) { delete[] p; });
     //for (int i = 0; i < 123; ++i)
     //    cout << sp.get()[i] << " ";
