@@ -12,8 +12,6 @@ void kthread_mutex_unlock(std::mutex::kthread_mutex_t*);
 #endif
 
 namespace std {
-mutex::mutex() : mtx(0) {}
-
 void mutex::lock() {
 #ifndef NDEBUG
     LOG("lock mutex");

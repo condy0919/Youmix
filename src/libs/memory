@@ -1,0 +1,74 @@
+#ifndef _YOUMIX_MEMORY_HPP_
+#define _YOUMIX_MEMORY_HPP_
+
+#include <stdint.h>
+#include <stddef.h>
+
+namespace std {
+
+template <typename T> class shared_ptr {
+public:
+    shared_ptr();
+    shared_ptr(const shared_ptr &);
+    shared_ptr(T *, void (*)(T*) = dfn);
+    shared_ptr &operator=(const shared_ptr &);
+    ~shared_ptr();
+
+    T *operator->() const;
+    T &operator*() const;
+
+    inline T *get() const;
+    inline size_t use_count() const;
+
+private:
+    T *p;
+    size_t *use;
+
+    void (*destroy_fn)(T *);
+    static void dfn(T* p) { delete p; }
+
+    void decr_use() {
+        if (--*use == 0) {
+            delete use;
+            destroy_fn(p);
+        }
+    }
+};
+
+
+template <typename T>
+shared_ptr<T>::shared_ptr()
+    : p(nullptr), use(new size_t(1)), destroy_fn(dfn) {}
+
+template <typename T>
+shared_ptr<T>::shared_ptr(const shared_ptr &rhs)
+    : p(rhs.p), use(rhs.use), destroy_fn(rhs.destroy_fn) {
+    ++*use;
+}
+
+template <typename T>
+shared_ptr<T>::shared_ptr(T *p, void (*fn)(T *))
+    : p(p), use(new size_t(1)), destroy_fn(fn) {}
+
+template <typename T>
+shared_ptr<T> &shared_ptr<T>::operator=(const shared_ptr &rhs) {
+    ++*rhs.use;
+    decr_use();
+    p = rhs.p;
+    use = rhs.use;
+}
+
+template <typename T> shared_ptr<T>::~shared_ptr() { decr_use(); }
+
+template <typename T> T *shared_ptr<T>::operator->() const { return p; }
+
+template <typename T> T &shared_ptr<T>::operator*() const { return *p; }
+
+template <typename T> T *shared_ptr<T>::get() const { return p; }
+
+template <typename T> size_t shared_ptr<T>::use_count() const {
+    return use ? *use : 0;
+}
+}
+
+#endif

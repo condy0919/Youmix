@@ -21,6 +21,7 @@
 #include "../libs/algorithm"
 #include "../libs/iterator"
 #include "../libs/initializer_list"
+#include "../libs/memory"
 
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
@@ -142,6 +143,12 @@ int kernel_main() {
             cout << endl;
         } while (std::next_permutation(std::begin(b), std::end(b)));
     }
+
+    //std::shared_ptr<int> sp(new int[123], [](int* p) { delete[] p; });
+    //for (int i = 0; i < 123; ++i)
+    //    cout << sp.get()[i] << " ";
+    //__asm__ __volatile__("hlt");
+
 
     // Start to schedule
     init_timer(200);

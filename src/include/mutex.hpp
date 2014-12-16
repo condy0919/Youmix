@@ -5,7 +5,14 @@ namespace std {
 class mutex {
 public:
     typedef unsigned kthread_mutex_t;
-    mutex();
+
+    constexpr mutex() : mtx(0) {}
+
+    mutex(const mutex&) = delete;
+    mutex(mutex&&) = delete;
+    mutex& operator=(const mutex&) = delete;
+    mutex& operator=(mutex&&) = delete;
+
     void lock();
     bool try_lock();
     void unlock();
