@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "algorithm"
+
 namespace std {
 
 template <typename T> class shared_ptr {
@@ -19,6 +21,14 @@ public:
 
     inline T *get() const;
     inline size_t use_count() const;
+
+    void swap(shared_ptr&);
+
+    void reset();
+    void reset(T*); // Conflict with standard.
+    void reset(T*, void (*)(T*));
+
+    bool unique() const;
 
 private:
     T *p;
@@ -68,6 +78,37 @@ template <typename T> T *shared_ptr<T>::get() const { return p; }
 
 template <typename T> size_t shared_ptr<T>::use_count() const {
     return use ? *use : 0;
+}
+
+template <typename T>
+bool shared_ptr<T>::unique() const { return use_count() == 1; }
+
+template <typename T>
+void shared_ptr<T>::reset() {
+    decr_use();
+}
+
+template <typename T>
+void shared_ptr<T>::reset(T *_p) {
+    decr_use();
+    p = _p;
+    use = new size_t(1);
+}
+
+template <typename T>
+void shared_ptr<T>::reset(T *_p, void (*fn)(T*)) {
+    decr_use();
+    p = _p;
+    use = new size_t(1);
+    destroy_fn = fn;
+}
+
+template <typename T>
+void shared_ptr<T>::swap(shared_ptr& rhs) {
+    using std::swap;
+    swap(p, rhs.p);
+    swap(use, rhs.use);
+    swap(destroy_fn, rhs.destroy_fn);
 }
 }
 
