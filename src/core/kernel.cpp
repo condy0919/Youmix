@@ -22,6 +22,7 @@
 #include "../libs/iterator"
 #include "../libs/initializer_list"
 #include "../libs/memory"
+#include "../libs/auto.hpp"
 
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
@@ -38,6 +39,16 @@
 multiboot_info_t *glb_mboot_ptr;
 bool flag = false;
 std::mutex mtx;
+
+void bar() {
+    io::cout << __func__ << io::endl;
+}
+
+void foo() {
+    io::cout << "inside foo\n";
+    Auto(bar());
+    io::cout << "go out of foo\n";
+}
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -144,13 +155,15 @@ int kernel_main() {
         } while (std::next_permutation(std::begin(b), std::end(b)));
     }
 
+    foo();
+
     //int buffer;
     //new(&buffer) int(0xffffffff);
     //cout << buffer << endl;
     //std::shared_ptr<int> sp(new int[123], [](int* p) { delete[] p; });
     //for (int i = 0; i < 123; ++i)
     //    cout << sp.get()[i] << " ";
-    //__asm__ __volatile__("hlt");
+    __asm__ __volatile__("hlt");
 
 
     // Start to schedule
