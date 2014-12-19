@@ -1,0 +1,64 @@
+#ifndef _YOUMIX_TUPLE_HPP_
+#define _YOUMIX_TUPLE_HPP_
+
+#include <stdint.h>
+#include <stddef.h>
+
+namespace std {
+template<typename... Tail>
+struct tuple;
+
+template<> struct tuple<> {};
+
+template<typename T, typename... Tail>
+struct tuple<T, Tail...> : public tuple<Tail...> {
+    typedef T value_type;
+    typedef T& reference;
+    typedef const T& const_reference;
+    typedef tuple<T, Tail...> type;
+    typedef tuple<Tail...> inherited;
+
+    tuple(const T& h, const Tail&... rest) : inherited(rest...), h(h) {}
+
+    const_reference head() const { return h; }
+    reference head() { return h; }
+
+    type& operator=(const type& rhs) {
+        h = rhs.h;
+        inherited::operator=(static_cast<const inherited&>(rhs));
+        return *this;
+    }
+
+protected:
+    T h;
+};
+
+template<size_t N, typename... Tail>
+struct get_helper;
+
+template<size_t N,typename T, typename... Tail>
+struct get_helper<N, tuple<T, Tail...>> {
+    typedef typename get_helper<N - 1, tuple<Tail...>>::value_type value_type;
+    typedef typename get_helper<N - 1, tuple<Tail...>>::type type;
+};
+
+template<typename T, typename... Tail>
+struct get_helper<0, tuple<T, Tail...>> {
+    typedef T value_type;
+    typedef tuple<T, Tail...> type;
+};
+
+template<size_t N, typename... Tail>
+constexpr const typename get_helper<N, tuple<Tail...>>::value_type& get(const tuple<Tail...>& t) {
+    typedef typename get_helper<N, tuple<Tail...>>::type type;
+    return static_cast<const type&>(t).head();
+}
+
+template<size_t N, typename... Tail>
+typename get_helper<N, tuple<Tail...>>::value_type& get(tuple<Tail...>& t) {
+    typedef typename get_helper<N, tuple<Tail...>>::type type;
+    return static_cast<type&>(t).head();
+}
+
+}
+#endif

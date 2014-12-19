@@ -23,6 +23,7 @@
 #include "../libs/initializer_list"
 #include "../libs/memory"
 #include "../libs/auto.hpp"
+#include "../libs/tuple"
 
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
@@ -156,6 +157,9 @@ int kernel_main() {
     }
 
     foo();
+
+    std::tuple<int, int, char> tp(1, 2, 'c');
+    io::cout << std::get<0>(tp) << " " << std::get<1>(tp) << " " << std::get<2>(tp) << io::endl;
 
     //int buffer;
     //new(&buffer) int(0xffffffff);
