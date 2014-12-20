@@ -24,7 +24,7 @@
 #include "../libs/memory"
 #include "../libs/auto.hpp"
 #include "../libs/tuple"
-#include "../libs/functional.hpp"
+#include "../libs/functional"
 
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
