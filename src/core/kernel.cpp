@@ -24,6 +24,7 @@
 #include "../libs/memory"
 #include "../libs/auto.hpp"
 #include "../libs/tuple"
+#include "../libs/functional.hpp"
 
 
 /* Check if the compiler thinks if we are targeting the wrong operating system.
@@ -160,6 +161,15 @@ int kernel_main() {
 
     std::tuple<int, int, char> tp(1, 2, 'c');
     io::cout << std::get<0>(tp) << " " << std::get<1>(tp) << " " << std::get<2>(tp) << io::endl;
+
+    int val = 42;
+    std::function<int()> VAL1([=]() { return val; });
+    std::function<int> VAL2([=]() { return val; });
+    std::function<int> VAL3 = VAL2;
+    cout << VAL1() << " " << VAL2() << " " << VAL3() << endl;
+
+    std::function<int(int, int)> bar([=](int x, int y) { return x + y + val; });
+    cout << bar(1, 2) << endl;
 
     //int buffer;
     //new(&buffer) int(0xffffffff);
