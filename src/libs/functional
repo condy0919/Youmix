@@ -18,6 +18,11 @@ public:
         del = helper<T>::del;
     }
 
+    function_impl(R (*fn)(void)) : pfn(fn), ref_cnt(new int(1)) {
+        invoke = helper<R(void)>::invoke;
+        del = helper<R(void)>::nop;
+    }
+
     function_impl(const function_impl& rhs)
         : pfn(rhs.pfn), ref_cnt(rhs.ref_cnt), invoke(rhs.invoke), del(rhs.del) {
         ++*ref_cnt;
@@ -53,6 +58,7 @@ private:
     struct helper {
         static R invoke(void *p) { return (*(T*)p)(); }
         static void del(void *p) { delete (T*)p; }
+        static void nop(void *) { }
     };
 
     void decr_ref() {
@@ -70,6 +76,11 @@ public:
     function_impl(const T& fn) : pfn(new T(fn)), ref_cnt(new int(1)) {
         invoke = helper<T>::invoke;
         del = helper<T>::del;
+    }
+
+    function_impl(R (*fn)(Args...)) : pfn(reinterpret_cast<void*>(fn)), ref_cnt(nullptr) {
+        invoke = helper<R(Args...)>::invoke;
+        del = helper<R(Args...)>::nop;
     }
 
     function_impl(const function_impl& rhs)
@@ -109,6 +120,7 @@ private:
             return (*(T *)p)(std::forward<Args>(args)...);
         }
         static void del(void *p) { delete (T*)p; }
+        static void nop(void *) { }
     };
 
     void decr_ref() {

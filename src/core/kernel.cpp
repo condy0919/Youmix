@@ -52,6 +52,10 @@ void foo() {
     io::cout << "go out of foo\n";
 }
 
+int baz(int x) {
+    return ++x;
+}
+
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
@@ -170,6 +174,10 @@ int kernel_main() {
 
     std::function<int(int, int)> bar([=](int x, int y) { return x + y + val; });
     cout << bar(1, 2) << endl;
+    std::function<int(int)> plus1_1(&baz);
+    std::function<int(int)> plus1_2(baz);
+    cout << plus1_1(42) << endl;
+    cout << plus1_2(12) << endl;
 
     //int buffer;
     //new(&buffer) int(0xffffffff);
