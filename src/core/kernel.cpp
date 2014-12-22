@@ -56,6 +56,12 @@ int baz(int x) {
     return ++x;
 }
 
+struct T {
+    int addup(int x, int y) {
+        return x + y + 1;
+    }
+};
+
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
@@ -178,6 +184,10 @@ int kernel_main() {
     std::function<int(int)> plus1_2(baz);
     cout << plus1_1(42) << endl;
     cout << plus1_2(12) << endl;
+
+    //T a;
+    //std::function<int(T, int, int)> addup(&T::addup);
+    //cout << addup(a, 0x7f, 0x7f) << endl;
 
     //int buffer;
     //new(&buffer) int(0xffffffff);

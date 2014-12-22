@@ -18,7 +18,7 @@ public:
         del = helper<T>::del;
     }
 
-    function_impl(R (*fn)(void)) : pfn(fn), ref_cnt(new int(1)) {
+    function_impl(R (*fn)(void)) : pfn(fn), ref_cnt(nullptr) {
         invoke = helper<R(void)>::invoke;
         del = helper<R(void)>::nop;
     }
