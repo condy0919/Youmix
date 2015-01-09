@@ -2,22 +2,12 @@
 #define _YOUMIX_TYPE_TRAITS_HPP_
 
 namespace std {
-template<typename...> struct function_type;
+template<bool Cond, typename T = void>
+struct enable_if { };
 
-template<typename R>
-struct function_type<R()> {
-    using type = R();
+template<typename T>
+struct enable_if<true, T> {
+    typedef T type;
 };
-
-template<typename R>
-struct function_type<R> {
-    using type = R();
-};
-
-template<typename R, typename... Args>
-struct function_type<R(Args...)> {
-    using type = R(Args...);
-};
-
 }
 #endif
