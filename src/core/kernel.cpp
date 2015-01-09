@@ -174,8 +174,8 @@ int kernel_main() {
 
     int val = 42;
     std::function<int()> VAL1([=]() { return val; });
-    std::function<int> VAL2([=]() { return val; });
-    std::function<int> VAL3 = VAL2;
+    std::function<int()> VAL2([=]() { return val; });
+    std::function<int()> VAL3 = VAL2;
     cout << VAL1() << " " << VAL2() << " " << VAL3() << endl;
 
     std::function<int(int, int)> bar([=](int x, int y) { return x + y + val; });
