@@ -5,6 +5,17 @@
 #include "memory"
 #include "algorithm"
 
+namespace {
+
+template<typename> struct class_of;
+
+template<typename R, typename C, typename... Args>
+struct class_of<R (C::*)(Args...)> {
+    typedef C type;
+};
+
+}
+
 namespace std {
 template<typename> class function;
 
@@ -22,9 +33,15 @@ public:
         del = helper<R(Args...)>::nop;
     }
 
+    //template<typename C, typename... Rest>
+    //function(R (C::*fn)(Rest...)) : pfunctor(reinterpret_cast<void*>(fn)), ref_cnt(nullptr) {
+    //    invoke = member_helper<R (C::*)(Rest...)>::member_invoke;
+    //    del = member_helper<R (C::*)(Rest...)>::nop;
+    //}
+
     function(const function& rhs) 
         : pfunctor(rhs.pfunctor), ref_cnt(rhs.ref_cnt), invoke(rhs.invoke), del(rhs.del) {
-            ++*ref_cnt;
+        ++*ref_cnt;
     }
 
     ~function() { decr_ref(); }
@@ -62,8 +79,26 @@ private:
         static void nop(void*) { }
     };
 
+    //template<typename T>
+    //struct member_helper {
+    //    static R member_invoke(void *p, Args&&... args) {
+    //        push_args(std::forward<Args>(args)...);
+    //        __asm__ __volatile__("call *%0" : : "r"(p));
+    //    }
+    //    static void del(void*) {}
+    //    static void nop(void*) {}
+    //private:
+    //    static void push_args() {}
+
+    //    template<typename Head, typename... Tail>
+    //    static void push_args(Head&& head, Tail&&... tail) {
+    //        push_args(std::forward<Tail>(tail)...);
+    //        __asm__ __volatile__("push %0" : : "r"(head));
+    //    }
+    //};
+
     void decr_ref() {
-        if (--*ref_cnt == 0) {
+        if (ref_cnt && --*ref_cnt == 0) {
             delete ref_cnt;
             del(pfunctor);
         }

@@ -10,27 +10,27 @@ SECTIONS
         *(.text)
     }
 
-    .rodata ALIGN(4K) : AT(ADDR(.rodata) - 0xc0000000)
+    .rodata ALIGN(4K) :
     {
         *(.rodata)
     }
 
-    .data ALIGN(4K) : AT(ADDR(.data) - 0xc0000000)
+    .data ALIGN(4K) :
     {
         *(.data)
     }
 
-    .bss ALIGN(4K) : AT(ADDR(.bss) - 0xc0000000)
+    .bss ALIGN(4K) :
     {
         *(COMMON)
         *(.bss)
         *(.bootstrap_stack)
     }
-    .stab ALIGN(4K) : AT(ADDR(.stab) - 0xc0000000)
+    .stab ALIGN(4K) :
     {
         *(.stab)
     }
-    .stabstr ALIGN(4K) : AT(ADDR(.stabstr) - 0xc0000000)
+    .stabstr ALIGN(4K) :
     {
         *(.stabstr)
     }

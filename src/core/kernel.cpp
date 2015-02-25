@@ -186,8 +186,8 @@ int kernel_main() {
     cout << plus1_2(12) << endl;
 
     //T a;
-    //std::function<int(T, int, int)> addup(&T::addup);
-    //cout << addup(a, 0x7f, 0x7f) << endl;
+    //std::function<int(T*, int, int)> addup(&T::addup);
+    //cout << addup(&a, 1, 2) << endl;
 
     //int buffer;
     //new(&buffer) int(0xffffffff);
