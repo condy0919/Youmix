@@ -110,6 +110,12 @@ void shared_ptr<T>::swap(shared_ptr& rhs) {
     swap(use, rhs.use);
     swap(destroy_fn, rhs.destroy_fn);
 }
+
+template<typename T>
+void swap(shared_ptr<T>& a, shared_ptr<T>& b) {
+    a.swap(b);
+}
+
 }
 
 #endif
