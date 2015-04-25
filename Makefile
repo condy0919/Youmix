@@ -2,9 +2,9 @@ QEMU = qemu-system-i386
 
 KERNEL = Youmix
 
-CC = i686-elf-gcc
-CXX = i686-elf-g++
-AS = i686-elf-as
+CC = ~/opt/cross/bin/i686-elf-gcc
+CXX = ~/opt/cross/bin/i686-elf-g++
+AS = ~/opt/cross/bin/i686-elf-as
 
 CXXFLAGS = -c -Wall -Wextra -ffreestanding -fno-exceptions -fno-rtti -ggdb -gstabs+ -std=c++14
 ASFLAGS = -g --gstabs
